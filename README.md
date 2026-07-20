@@ -12,7 +12,7 @@ Keeping that nostalgic feeling is a key part of the project and thus requires us
 
 
 ## A complete list of features can be found here:
-- [The Main Doc](https://docs.google.com/document/d/1rBSuhFmiiehghr3AQ37JwBzbLCD21TXo_SWpUUXsz9k/copy) is the primary source of info for Emerald Legacy
+- [The Main Doc](https://docs.google.com/document/d/17iRIbUoYlAYwsBKb-cpteeqRWWgolTjQ24NzMoZapg4/copy) is the primary source of info for Emerald Legacy
     - [A Website Version](https://mryakobo.github.io/poke-emerald-legacy-docs/) of this doc is now available, thanks to @ MrYakobo! Please use this if you have trouble copying/viewing the Google page.
 - [The ChangeDex](https://docs.google.com/spreadsheets/d/1XyuXmMi0sodXXR8yG7_6RYDwIn4L56QNFGdcFl4PsOI/edit) remains the best source for game data, featuring reference colors for changes since Vanilla as well as some in 1.1.
     - [Sorted Encounters](https://docs.google.com/spreadsheets/d/1euQCVphGYMXH9cEX2CwEztvbxzvF9Hik6fAoxq0_e7k/edit?gid=1066205367#gid=1066205367) is a more readable version of Changedex, specifically for Pokemon locations.

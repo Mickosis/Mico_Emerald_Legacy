@@ -85,10 +85,29 @@ jobs:
           
           if [ -n "${{ github.event.inputs.version }}" ]; then
             NEXT_TAG="${{ github.event.inputs.version }}"
-          elif startsWith "${{ github.ref }}" "refs/tags/"; then
+          elif [[ "${{ github.ref }}" == refs/tags/* ]]; then
             NEXT_TAG="${GITHUB_REF#refs/tags/}"
           else
-            NEXT_TAG="$LATEST_TAG"
+            VERSION_WITHOUT_V="${LATEST_TAG#v}"
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_WITHOUT_V"
+            MAJOR=${MAJOR:-1}
+            MINOR=${MINOR:-0}
+            PATCH=${PATCH:-0}
+            
+            COMMITS=$(git log ${LATEST_TAG}..HEAD --oneline 2>/dev/null || git log -n 10 --oneline)
+            if echo "$COMMITS" | grep -qE "BREAKING CHANGE|feat!:"; then
+              MAJOR=$((MAJOR + 1))
+              MINOR=0
+              PATCH=0
+            elif echo "$COMMITS" | grep -qE "^[a-f0-9]+ feat(\(.*\))?:"; then
+              MINOR=$((MINOR + 1))
+              PATCH=0
+            elif echo "$COMMITS" | grep -qE "^[a-f0-9]+ (fix|docs|chore)(\(.*\))?:"; then
+              PATCH=$((PATCH + 1))
+            else
+              PATCH=$((PATCH + 1))
+            fi
+            NEXT_TAG="v${MAJOR}.${MINOR}.${PATCH}"
           fi
           
           echo "Next tag: $NEXT_TAG"
@@ -116,7 +135,7 @@ jobs:
             Micos_Emerald_Legacy.bps
 
       - name: Publish GitHub Release
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
+        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.versioning.outputs.next_tag }}
@@ -129,25 +148,14 @@ jobs:
             #### 📝 Changelog for this release:
             ${{ steps.changelog.outputs.changes }}
 
-            #### 🌟 Included Quality of Life Features:
-            - **Overworld Follower Pokémon**: Full Gen 1–3 walking followers.
-            - **Dynamic Surfing Overworld Sprites**: Custom per-species surfing graphics.
-            - **Field Move / HM Bag Checks**: Use HM field moves without teaching them to moveslots.
-            - **EXP. All**: Toggleable Key Item from Mr. Stone.
-            - **In-Game EV / IV Stat Editor**: Inspect and adjust IVs/EVs in party menu (±10 with L/R after National Dex).
-            - **Nature Mints & Ability Capsules**: Sold in Pretty Petal Flower Shop, Slateport, & Battle Frontier.
-            - **Post-Game Egg Move Tutor**: Fallarbor Town after beating the Champion.
-            - **Fly to Secret Base & Lilycove Rooftop**: Direct map flight.
-            - **Secret Base Exclusive Items & Rooftop Clearance**: Seedot/Lotad dolls, Red/Blue tents, and permanent post-game clearance sale.
-            - **Modern Premier Ball Scaling**: 1 Premier Ball per 10 Pokéballs bought in bulk.
-            - **Repel Auto-Prompt**: Instant prompt when Repel wears off.
-            - **TV Roamer Tracking**: Marks Latias/Latios as Seen in Pokédex upon TV news choice.
-            - **Register Battle Frontier Opponents as Seen**: Any Pokémon encountered in Battle Frontier or Trainer Hill is marked as Seen in your Pokédex.
-            - **Soot Sack Counter**: Check ash quantity directly from the Bag.
-            - **Renewable PP Up & PP Max**: At the Battle Frontier Vitamin Vendor.
+            #### 🌟 Included Features:
+            - **Overworld Follower Pokémon**: Full Generation 1–3 Pokémon (all 386 species + shiny forms) follow behind the player with emotional reactions and interactions (enabled by default).
+            - **Custom Surfing Overworld Sprites**: Over 79 Pokémon species render with custom surfing overworld sprites and normal/shiny palettes (enabled by default).
+            - **EXP. All Key Item**: Key Item from Mr. Stone toggling 50/50 party experience distribution + full EV gains.
+            - **HM Field Move Quality of Life**: Use HM field moves without teaching them to moveslots if you have the badge, HM in Bag, and a compatible Pokémon.
 
             #### 💾 Save File Compatibility:
-            - **100% Compatible with Base Emerald Legacy Saves**: Memory structures and offsets match byte-for-byte (`0x3D88`). Drop your existing `.sav` save file straight in!
+            - **100% Byte-for-Byte Compatible**: Drop your existing Pokémon Emerald Legacy `.sav` save file straight in!
 
             #### 🕹️ How to Patch:
             1. Download `Micos_Emerald_Legacy.bps` below.

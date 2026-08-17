@@ -21,9 +21,9 @@ Welcome to **Mico's Pokémon Emerald Legacy**. This document serves as the perma
 4. **Automated CI/CD & Release Protocol**:
    - Building the ROM and updating GitHub Releases is 100% automated via GitHub Actions (`.github/workflows/build_and_release.yml`).
    - Every release automatically includes:
-     1. The compiled patch file: **`Micos_Emerald_Legacy.bps`**
-     2. The compiled ROM: **`pokeemerald.gba`**
-     3. An automated changelog and feature list.
+     1. The compiled patch file: **`Micos_Emerald_Legacy.bps`** (100% clean, legal distribution)
+     2. An automated changelog and feature list.
+   - The compiled ROM (**`pokeemerald.gba`**) is stored as a private GitHub Actions workflow artifact.
 
 ---
 

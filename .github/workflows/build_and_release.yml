@@ -189,6 +189,5 @@ jobs:
             3. Apply `Micos_Emerald_Legacy.bps` to your clean **Pokémon Emerald (USA, Europe)** ROM.
           files: |
             Micos_Emerald_Legacy.bps
-            pokeemerald.gba
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -19,6 +19,7 @@ void BattleDestroyYesNoCursorAt(u8 cursorPosition);
 void BattleCreateYesNoCursorAt(u8 cursorPosition);
 void BufferMoveToLearnIntoBattleTextBuff2(void);
 void HandleBattleWindow(u8 xStart, u8 yStart, u8 xEnd, u8 yEnd, u8 flags);
+s32 GetTypeEffectiveness(struct Pokemon *mon, u8 moveType);
 bool8 UproarWakeUpCheck(u8 battlerId);
 
 extern void (* const gBattleScriptingCommandsTable[])(void);

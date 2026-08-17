@@ -37,12 +37,36 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gcc-arm-none-eabi binutils-arm-none-eabi libpng-dev build-essential python3 git
+          sudo apt-get install -y --no-install-recommends gcc-arm-none-eabi binutils-arm-none-eabi libpng-dev
+
+      - name: Cache Vanilla Retail Base ROM
+        id: cache-vanilla-base
+        uses: actions/cache@v4
+        with:
+          path: vanilla_emerald.gba
+          key: vanilla-emerald-base-b75f28d0
+
+      - name: Cache Host Tools & agbcc
+        id: cache-tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            tools/agbcc
+            tools/gbagfx/gbagfx
+            tools/scaninc/scaninc
+            tools/preproc/preproc
+            tools/ramscrgen/ramscrgen
+            tools/gbafix/gbafix
+            tools/rsfont/rsfont
+            tools/mapjson/mapjson
+            tools/aif2pcm/aif2pcm
+            tools/mid2agb/mid2agb
+          key: tools-agbcc-${{ hashFiles('make_tools.mk') }}
 
       - name: Setup agbcc
+        if: steps.cache-tools.outputs.cache-hit != 'true'
         run: |
-          git clone https://github.com/pret/agbcc.git
+          git clone --depth 1 https://github.com/pret/agbcc.git
           cd agbcc
           ./build.sh
           ./install.sh ../
@@ -50,6 +74,7 @@ jobs:
           rm -rf agbcc
 
       - name: Build Host Tools
+        if: steps.cache-tools.outputs.cache-hit != 'true'
         run: |
           make -f make_tools.mk -j$(nproc)
 
@@ -57,7 +82,8 @@ jobs:
         run: |
           make -j$(nproc)
 
-      - name: Build Vanilla Retail Pokémon Emerald Base
+      - name: Build Vanilla Retail Pokémon Emerald Base (If not cached)
+        if: steps.cache-vanilla-base.outputs.cache-hit != 'true'
         run: |
           git worktree add /tmp/vanilla_build b75f28d0
           cd /tmp/vanilla_build

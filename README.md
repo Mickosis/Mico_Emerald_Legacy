@@ -23,7 +23,8 @@ This fork brings together the most popular modern **Quality of Life (QoL)** and 
 ### 🐾 Visuals & Overworld Followers
 - **Overworld Follower Pokémon**: Full Generation 1–3 Pokémon (all 386 species + shiny forms) follow behind the player in the overworld!
 - **Interactive Dialogue & Emotions**: Turn around and press **A** to interact with your lead Pokémon. Your Pokémon responds with unique emotional reactions, sounds, and text dialogues based on friendship, status conditions, weather, map environment, and type effectiveness.
-- **Always Enabled by Default**: Followers are active whenever you have a healthy party Pokémon without requiring complex configuration menus.
+- **Custom Surfing Overworld Sprites**: Over 79 Pokémon species across Generations 1–3 render with their unique, custom surfing overworld sprites and normal/shiny palettes (including Lapras, Blastoise, Kyogre, Swampert, Wailord, Gyarados, Latios, Latias, Rayquaza, and more), seamlessly falling back to the classic surf blob for any other species.
+- **Always Enabled by Default**: Followers and custom surfing sprites are active whenever you travel with your Pokémon without requiring complex configuration menus.
 - **Authentic Vanilla Emerald Legacy Core**: Every single Pokémon base stat, learnset, TM/HM distribution, encounter table, and battle mechanic remains 100% authentic to base *Pokémon Emerald Legacy*.
 
 ### 🎒 Quality of Life & Training

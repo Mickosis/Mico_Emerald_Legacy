@@ -124,6 +124,7 @@ SECTIONS {
         src/field_player_avatar.o(.text);
         src/event_object_movement.o(.text);
         src/follower_helper.o(.text);
+        src/surfable.o(.text);
         src/field_message_box.o(.text);
         src/event_object_lock.o(.text);
         src/text_window.o(.text);
@@ -510,6 +511,7 @@ SECTIONS {
         src/field_player_avatar.o(.rodata);
         src/event_object_movement.o(.rodata);
         src/follower_helper.o(.rodata);
+        src/surfable.o(.rodata);
         src/text_window.o(.rodata);
         src/scrcmd.o(.rodata);
         src/field_control_avatar.o(.rodata);

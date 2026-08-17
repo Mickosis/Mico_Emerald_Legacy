@@ -61,7 +61,7 @@ jobs:
             tools/mapjson/mapjson
             tools/aif2pcm/aif2pcm
             tools/mid2agb/mid2agb
-          key: tools-agbcc-${{ hashFiles('make_tools.mk') }}
+          key: tools-agbcc-${{ hashFiles('make_tools.mk', 'tools/**') }}
 
       - name: Setup agbcc
         if: steps.cache-tools.outputs.cache-hit != 'true'

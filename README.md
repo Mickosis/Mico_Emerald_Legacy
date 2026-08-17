@@ -28,6 +28,7 @@ This fork brings together the most popular modern **Quality of Life (QoL)** and 
 
 ### 🎒 Quality of Life & Training
 - **EXP. All**: Key Item given by Mr. Stone at Devon Corp after delivering Steven's letter. Can be toggled On/Off in the Key Items pocket or registered to `SELECT`. When enabled, 50% of battle experience goes to participating Pokémon and 50% is shared evenly across all party members (with full EV gains for all recipients). Existing saves can talk to Mr. Stone to receive it immediately.
+- **HM Field Move Quality of Life**: Pokémon in your party **no longer need to have HM moves in their 4 active moveslots** to use them in the field! As long as you possess the respective Gym Badge, have the HM in your Bag, and have at least one party Pokémon compatible with the move, you can clear obstacles and use field moves (including `FLY` and `FLASH` from the Party Menu) seamlessly.
 
 ### 🛡️ Strictly Vanilla Pokémon Balance
 - ❌ **No stat changes** to Pokémon.

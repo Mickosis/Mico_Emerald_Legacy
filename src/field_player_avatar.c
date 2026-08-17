@@ -12,6 +12,7 @@
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "party_menu.h"
+#include "item.h"
 #include "random.h"
 #include "rotating_gate.h"
 #include "script.h"
@@ -1286,7 +1287,8 @@ bool8 PartyHasMonWithSurf(void)
         {
             if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE)
                 break;
-            if (MonKnowsMove(&gPlayerParty[i], MOVE_SURF))
+            if (MonKnowsMove(&gPlayerParty[i], MOVE_SURF)
+             || (CheckBagHasItem(ITEM_HM03, 1) && !GetMonData(&gPlayerParty[i], MON_DATA_IS_EGG) && CanMonLearnTMHM(&gPlayerParty[i], ITEM_HM03 - ITEM_TM01)))
                 return TRUE;
         }
     }

@@ -691,7 +691,7 @@
 #define FLAG_FRONTIER_SEEDOT_NPC_TRADE_COMPLETED    0x28B
 #define FLAG_FRONTIER_PLUSLE_NPC_TRADE_COMPLETED    0x28C
 #define FLAG_RECEIVED_SHINY_BELDUM      0x28D
-#define FLAG_UNUSED_0x28E  0x28E // Unused Flag
+#define FLAG_RECEIVED_EXP_ALL 0x28E
 #define FLAG_UNUSED_0x28F  0x28F // Unused Flag
 #define FLAG_UNUSED_0x290  0x290 // Unused Flag
 #define FLAG_UNUSED_0x291  0x291 // Unused Flag
@@ -1276,7 +1276,7 @@
 #define FLAG_CAUGHT_UNOWN_A                                         0x4CF
 #define FLAG_SHOW_HIDDEN_POWER                                      0x4D0
 #define FLAG_UNUSED_0x4D1                                           0x4D1 // Unused Flag
-#define FLAG_UNUSED_0x4D2                                           0x4D2 // Unused Flag
+#define FLAG_EXP_ALL                                                0x4D2
 #define FLAG_UNUSED_0x4D3                                           0x4D3 // Unused Flag
 #define FLAG_UNUSED_0x4D4                                           0x4D4 // Unused Flag
 #define FLAG_UNUSED_0x4D5                                           0x4D5 // Unused Flag

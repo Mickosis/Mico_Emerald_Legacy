@@ -4538,4 +4538,17 @@ const struct Item gItems[] =
         .type = ITEM_USE_BAG_MENU,
         .fieldUseFunc = ItemUseOutOfBattle_CannotUse,
     },
+
+    [ITEM_EXP_ALL] =
+    {
+        .name = _("EXP. ALL"),
+        .itemId = ITEM_EXP_ALL,
+        .price = 0,
+        .importance = 1,
+        .registrability = TRUE,
+        .description = sExpAllDesc,
+        .pocket = POCKET_KEY_ITEMS,
+        .type = ITEM_USE_FIELD,
+        .fieldUseFunc = ItemUseOutOfBattle_ExpAll,
+    },
 };

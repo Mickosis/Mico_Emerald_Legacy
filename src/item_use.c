@@ -1149,4 +1149,28 @@ void ItemUseOutOfBattle_CannotUse(u8 taskId)
     DisplayDadsAdviceCannotUseItemMessage(taskId, gTasks[taskId].tUsingRegisteredKeyItem);
 }
 
+void ItemUseOutOfBattle_ExpAll(u8 taskId)
+{
+    bool8 expAllOn = FlagGet(FLAG_EXP_ALL);
+    
+    if (!expAllOn)
+    {
+        FlagSet(FLAG_EXP_ALL);
+        PlaySE(SE_EXP_MAX);
+        if (gTasks[taskId].tUsingRegisteredKeyItem)
+            DisplayItemMessageOnField(taskId, gText_ExpAllTurnOn, Task_CloseCantUseKeyItemMessage);
+        else
+            DisplayItemMessage(taskId, 1, gText_ExpAllTurnOn, CloseItemMessage);
+    }
+    else
+    {
+        FlagClear(FLAG_EXP_ALL);
+        PlaySE(SE_PC_OFF);
+        if (gTasks[taskId].tUsingRegisteredKeyItem)
+            DisplayItemMessageOnField(taskId, gText_ExpAllTurnOff, Task_CloseCantUseKeyItemMessage);
+        else
+            DisplayItemMessage(taskId, 1, gText_ExpAllTurnOff, CloseItemMessage);
+    }
+}
+
 #undef tUsingRegisteredKeyItem

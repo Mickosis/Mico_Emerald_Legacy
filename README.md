@@ -26,6 +26,9 @@ This fork brings together the most popular modern **Quality of Life (QoL)** and 
 - **Always Enabled by Default**: Followers are active whenever you have a healthy party Pokémon without requiring complex configuration menus.
 - **Authentic Vanilla Emerald Legacy Core**: Every single Pokémon base stat, learnset, TM/HM distribution, encounter table, and battle mechanic remains 100% authentic to base *Pokémon Emerald Legacy*.
 
+### 🎒 Quality of Life & Training
+- **EXP. All**: Key Item given by Mr. Stone at Devon Corp after delivering Steven's letter. Can be toggled On/Off in the Key Items pocket or registered to `SELECT`. When enabled, 50% of battle experience goes to participating Pokémon and 50% is shared evenly across all party members (with full EV gains for all recipients). Existing saves can talk to Mr. Stone to receive it immediately.
+
 ### 🛡️ Strictly Vanilla Pokémon Balance
 - ❌ **No stat changes** to Pokémon.
 - ❌ **No learnset or moveset changes**.

@@ -5,10 +5,10 @@ on:
     branches: [ main ]
     tags: [ 'v*' ]
     paths-ignore:
+      - '.github/**'
       - '**.md'
       - 'LICENSE'
       - '.gitignore'
-      - '.github/copilot-instructions.md'
   workflow_dispatch:
     inputs:
       version:

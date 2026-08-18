@@ -1271,12 +1271,12 @@ static bool32 ShouldPlayVanillaAmbientCry(void)
 
 static void PlayAmbientCry(void)
 {
-    if (!ShouldPlayVanillaAmbientCry())
-        return;
-
     s16 x, y;
     s8 pan;
     s8 volume;
+
+    if (!ShouldPlayVanillaAmbientCry())
+        return;
 
     PlayerGetDestCoords(&x, &y);
     if (sIsAmbientCryWaterMon == TRUE

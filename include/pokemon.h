@@ -600,6 +600,4 @@ static inline enum ReturnToIdleOWE OWE_GetReturnToIdleFromSpecies(u16 speciesId)
     return gOWESpeciesBehavior[OWE_GetBehaviorIndexFromSpecies(speciesId)].returnToIdle;
 }
 
-void FixBadEggsInPlayerPartyAndStorage(void);
-
 #endif // GUARD_POKEMON_H

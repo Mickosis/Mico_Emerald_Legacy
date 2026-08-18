@@ -570,6 +570,8 @@ static void StartTrainerApproach(TaskFunc followupFunc)
     u8 taskId;
     TaskFunc taskFunc;
 
+    HideFollowerForFieldEffect();
+
     if (gApproachingTrainerId == 0)
         taskId = gApproachingTrainers[0].taskId;
     else

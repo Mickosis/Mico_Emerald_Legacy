@@ -16,6 +16,7 @@
 #include "palette.h"
 #include "window.h"
 #include "event_object_movement.h"
+#include "field_effect.h"
 #include "event_scripts.h"
 #include "tv.h"
 #include "trainer_see.h"
@@ -1086,6 +1087,7 @@ void SetMapVarsToTrainer(void)
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
 {
     InitTrainerBattleVariables();
+    HideFollowerForFieldEffect();
     sTrainerBattleMode = TrainerBattleLoadArg8(data);
 
     switch (sTrainerBattleMode)

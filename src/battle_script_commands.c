@@ -3502,8 +3502,16 @@ static void Cmd_getexp(void)
                     PREPARE_STRING_BUFFER(gBattleTextBuff2, i);
                     PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff3, 5, gBattleMoveDamage);
 
-                    if ((gBattleStruct->sentInPokes & 1) || ((holdEffect == HOLD_EFFECT_EXP_SHARE) && !FlagGet(FLAG_EXP_ALL)))
+                    if (gBattleStruct->sentInPokes & 1)
                         PrepareStringBattle(STRINGID_PKMNGAINEDEXP, gBattleStruct->expGetterBattlerId);
+                    else if (holdEffect == HOLD_EFFECT_EXP_SHARE && !FlagGet(FLAG_EXP_ALL))
+                        PrepareStringBattle(STRINGID_PKMNGAINEDEXP, gBattleStruct->expGetterBattlerId);
+                    else if (gExpAllMessCheck && FlagGet(FLAG_EXP_ALL))
+                    {
+                        gExpAllMessCheck = FALSE;
+                        PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff3, 5, gExpShareExp);
+                        PrepareStringBattle(STRINGID_PKMNGAINEDEXPALL, gBattleStruct->expGetterBattlerId);
+                    }
 
                     MonGainEVs(&gPlayerParty[gBattleStruct->expGetterMonId], gBattleMons[gBattlerFainted].species);
                 }
@@ -3597,16 +3605,7 @@ static void Cmd_getexp(void)
             if (gBattleStruct->expGetterMonId < PARTY_SIZE)
                 gBattleScripting.getexpState = 2; // loop again
             else
-            {                
-                if (gExpAllMessCheck && FlagGet(FLAG_EXP_ALL))
-                {
-                    gExpAllMessCheck = FALSE;
-                    gBattleStruct->expGetterMonId = 0;
-                    PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff3, 5, gExpShareExp);
-                    PrepareStringBattle(STRINGID_PKMNGAINEDEXPALL, gBattleStruct->expGetterBattlerId);
-                }
                 gBattleScripting.getexpState = 6; // we're done
-            }
         }
         break;
     case 6: // increment instruction

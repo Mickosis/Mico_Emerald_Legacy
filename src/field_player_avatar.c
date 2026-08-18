@@ -1896,6 +1896,16 @@ static bool8 Fishing_CheckMoreDots(struct Task *task)
 
 static bool8 Fishing_MonOnHook(struct Task *task)
 {
+    s16 x = gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.x;
+    s16 y = gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.y;
+    MoveCoords(GetPlayerFacingDirection(), &x, &y);
+    gFieldEffectArguments[0] = x;
+    gFieldEffectArguments[1] = y;
+    gFieldEffectArguments[2] = gObjectEvents[gPlayerAvatar.objectEventId].previousElevation;
+    gFieldEffectArguments[3] = 1;
+    FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
+    PlaySE(SE_M_SPLASH);
+
     AlignFishingAnimationFrames();
     FillWindowPixelBuffer(0, PIXEL_FILL(1));
     AddTextPrinterParameterized2(0, FONT_NORMAL, gText_PokemonOnHook, 1, 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
@@ -1916,6 +1926,15 @@ static bool8 Fishing_StartEncounter(struct Task *task)
         if (!IsTextPrinterActive(0))
         {
             struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+            s16 x = playerObjEvent->currentCoords.x;
+            s16 y = playerObjEvent->currentCoords.y;
+            MoveCoords(GetPlayerFacingDirection(), &x, &y);
+            gFieldEffectArguments[0] = x;
+            gFieldEffectArguments[1] = y;
+            gFieldEffectArguments[2] = playerObjEvent->previousElevation;
+            gFieldEffectArguments[3] = 1;
+            FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
+            PlaySE(SE_M_SPLASH);
 
             ObjectEventSetGraphicsId(playerObjEvent, task->tPlayerGfxId);
             ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);

@@ -9,7 +9,7 @@
 #define WE_OWE_FLAG_DISABLED                0       // Replace 0 with a flag to disable generated OWEs.
 #define WE_OWE_SPECIAL_ONLY                 FALSE   // If TRUE, generated OWEs can only be special spawns.
 #define WE_OWE_BATTLE_PIKE                  FALSE   // If TRUE, OWEs can spawn in the Battle Pike.
-#define WE_OWE_BATTLE_PYRAMID               FALSE   // If TRUE, OWEs can spawn in the Battle Pyramid.
+#define WE_OWE_BATTLE_PYRAMID               TRUE    // If TRUE, OWEs can spawn in the Battle Pyramid.
 #define WE_OWE_RESTRICT_METATILE            TRUE    // If TRUE, OWEs stay within the same encounter metatile type.
 #define WE_OWE_RESTRICT_MAP                 TRUE    // If TRUE, OWEs stay within the current map bounds.
 #define WE_OWE_UNRESTRICT_SIGHT             FALSE   // If TRUE, OWEs ignore movement restrictions when they can see the player.

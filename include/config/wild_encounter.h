@@ -22,6 +22,6 @@
 #define WE_OWE_PREVENT_SHINY_DESPAWN        TRUE    // If TRUE, shiny OWEs won't despawn off-screen on the same map.
 #define WE_OWE_PREVENT_FEEBAS_DESPAWN       FALSE   // If TRUE, Feebas OWEs won't despawn off-screen on the same map.
 #define WE_OWE_DESPAWN_ON_ENTER_TOWN        TRUE    // If TRUE, despawns all OWEs upon entering a city or town.
-#define WE_OWE_NO_REPEL_DEXNAV_COLLISION    FALSE   // If TRUE, OWEs can't be triggered by collision when Repel is active.
+#define WE_OWE_NO_REPEL_DEXNAV_COLLISION    TRUE   // If TRUE, OWEs can't be triggered by collision when Repel is active.
 
 #endif // GUARD_CONFIG_WILD_ENCOUNTER_OW_H

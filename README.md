@@ -28,7 +28,6 @@ Wild Pokémon physically appear and roam throughout tall grass, caves, water rou
 - **❤️ Party Lead Ability Reactions**: 
   - **Cute Charm**: Wild Pokémon react with a **Heart ❤️ emote** and walk towards your lead.
   - **Intimidate**: Lower-level wild Pokémon get startled, hesitate, and **flee** from your lead.
-- **⚡ Canonical Battle Generation**: Every caught wild Pokémon generates with valid cryptographic checksums, legal Trainer IDs, and proper movesets, ensuring 100% safe saves and zero Bad EGG corruptions.
 
 ---
 

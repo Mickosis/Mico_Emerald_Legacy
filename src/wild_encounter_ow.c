@@ -1449,6 +1449,9 @@ static void PlayOWECry(struct ObjectEvent *owe)
     
     player = &gObjectEvents[gPlayerAvatar.objectEventId];
     speciesId = OW_SPECIES(owe);
+    if (speciesId == SPECIES_NONE || speciesId >= NUM_SPECIES)
+        return;
+
     distanceX = owe->currentCoords.x - player->currentCoords.x;
     distanceY = owe->currentCoords.y - player->currentCoords.y;
     distanceMax = OWE_SPAWN_WIDTH_RADIUS + OWE_SPAWN_HEIGHT_RADIUS;
@@ -1466,8 +1469,8 @@ static void PlayOWECry(struct ObjectEvent *owe)
     if (distance > distanceMax)
         distance = distanceMax;
 
-    volume = 80 - (distance * (80 - 50)) / distanceMax;
-    pan = 212 + ((distanceX + OWE_SPAWN_WIDTH_RADIUS) * (300 - 212)) / (2 * OWE_SPAWN_WIDTH_RADIUS);
+    volume = 80 - (distance * 30) / distanceMax;
+    pan = (distanceX * 60) / OWE_SPAWN_WIDTH_RADIUS;
     
     PlayCry_NormalNoDucking(speciesId, pan, volume, CRY_PRIORITY_AMBIENT);
 }

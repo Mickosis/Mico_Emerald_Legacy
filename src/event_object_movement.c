@@ -6282,6 +6282,9 @@ void UpdateObjectEventCurrentMovement(struct ObjectEvent *objectEvent, struct Sp
     else if (!objectEvent->frozen)
         while (callback(objectEvent, sprite));
 
+    if (!objectEvent->active)
+        return;
+
     DoGroundEffects_OnBeginStep(objectEvent, sprite);
     DoGroundEffects_OnFinishStep(objectEvent, sprite);
     UpdateObjectEventSpriteAnimPause(objectEvent, sprite);

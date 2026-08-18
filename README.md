@@ -79,5 +79,5 @@ python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Micos_Emerald_Lega
 
 - **Original Emerald Legacy Team**: [TheSmithPlays](https://www.youtube.com/@smithplayspokemon), [cRz-Shadows](https://github.com/cRz-Shadows), Weebra, Aerogod, Disq, Isona, ZuperZACH, Karlos, Regi.
 - **Overworld Wild Encounters (OWE)**: [HashtagMarky](https://github.com/HashtagMarky) & [Bivurnum](https://github.com/bivurnum) (PR #8434 / pokeemerald-expansion).
-- **Follower Pokémon Engine**: Exclsior, Voloved, Ghoulslash, ExpoSeed, Lunos, Mkol103, FieryMewtwo, TheXaman, LOuroboros, Jaizu, Buffel Saft, AkimotoBubble, Scyrous.
+- **Follower Pokémon & Custom Overworld Sprites**: [Exclsior](https://github.com/Exclsior) (Follower Pokémon engine, dynamic surfing sprites), Voloved, Ghoulslash, ExpoSeed, Lunos, Mkol103, FieryMewtwo, TheXaman, LOuroboros, Jaizu, Buffel Saft, AkimotoBubble, Scyrous.
 - **Pret Community**: [pokeemerald](https://github.com/pret/pokeemerald) disassembly project and tooling.

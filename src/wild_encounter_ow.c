@@ -339,9 +339,12 @@ void UpdateOverworldWildEncounter(void)
     objectEventTemplate.trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER;
 
     objectEventId = GetObjectEventIdByLocalId(infoOWE.localId);
-    owe = &gObjectEvents[objectEventId];
-    if (ShouldDespawnGeneratedForNewOWE(owe))
-        RemoveObjectEvent(owe);
+    if (objectEventId < OBJECT_EVENTS_COUNT)
+    {
+        owe = &gObjectEvents[objectEventId];
+        if (ShouldDespawnGeneratedForNewOWE(owe))
+            RemoveObjectEvent(owe);
+    }
     objectEventId = SpawnSpecialObjectEvent(&objectEventTemplate);
 
     assertf(objectEventId < OBJECT_EVENTS_COUNT, "could not spawn generated overworld encounter. too many object events exist")
@@ -943,27 +946,36 @@ static bool32 CheckCurrentWildMonHeaderForOWE(bool32 shouldSpawnWaterMons)
 
 static u32 GetOldestActiveOWESlot(bool32 forceRemove)
 {
-    struct ObjectEvent *slotMon, *oldest = &gObjectEvents[GetObjectEventIdByLocalId(LOCALID_OW_ENCOUNTER_END)];
+    struct ObjectEvent *slotMon, *oldest = NULL;
     u32 spawnSlot;
     u32 i;
+    u8 objEventId;
 
     for (spawnSlot = 0; spawnSlot < OWE_SPAWNS_MAX; spawnSlot++)
     {
-        slotMon = &gObjectEvents[GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(spawnSlot))];
-        if (OW_SPECIES(slotMon) != SPECIES_NONE && (!HasOWENoDespawnFlag(slotMon) || forceRemove == TRUE))
+        objEventId = GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(spawnSlot));
+        if (objEventId >= OBJECT_EVENTS_COUNT)
+            continue;
+
+        slotMon = &gObjectEvents[objEventId];
+        if (IsOverworldWildEncounter(slotMon, OWE_GENERATED) && OW_SPECIES(slotMon) != SPECIES_NONE && (!HasOWENoDespawnFlag(slotMon) || forceRemove == TRUE))
         {
             oldest = slotMon;
             break;
         }
     }
 
-    if (spawnSlot >= OWE_SPAWNS_MAX)
+    if (oldest == NULL)
         return OWE_INVALID_SPAWN_SLOT;
 
-    for (i = spawnSlot; i < OWE_SPAWNS_MAX; i++)
+    for (i = spawnSlot + 1; i < OWE_SPAWNS_MAX; i++)
     {
-        slotMon = &gObjectEvents[GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(i))];
-        if (OW_SPECIES(slotMon) != SPECIES_NONE && (!HasOWENoDespawnFlag(slotMon) || forceRemove == TRUE))
+        objEventId = GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(i));
+        if (objEventId >= OBJECT_EVENTS_COUNT)
+            continue;
+
+        slotMon = &gObjectEvents[objEventId];
+        if (IsOverworldWildEncounter(slotMon, OWE_GENERATED) && OW_SPECIES(slotMon) != SPECIES_NONE && (!HasOWENoDespawnFlag(slotMon) || forceRemove == TRUE))
         {
             if (slotMon->sOverworldEncounterAge > oldest->sOverworldEncounterAge)
                 oldest = slotMon;
@@ -1164,14 +1176,19 @@ static void SortOWEAges(void)
     u32 numActive = GetNumberOfActiveOWEs(OWE_GENERATED);
     u32 count = 0;
     s32 i, j;
+    u8 objEventId;
 
     if (OWE_SPAWNS_MAX <= 1)
         return;
 
     for (i = 0; i < OWE_SPAWNS_MAX; i++)
     {
-        slotMon = &gObjectEvents[GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(i))];
-        if (IsOverworldWildEncounter(slotMon, OWE_ANY) && OW_SPECIES(slotMon) != SPECIES_NONE)
+        objEventId = GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(i));
+        if (objEventId >= OBJECT_EVENTS_COUNT)
+            continue;
+
+        slotMon = &gObjectEvents[objEventId];
+        if (IsOverworldWildEncounter(slotMon, OWE_GENERATED) && OW_SPECIES(slotMon) != SPECIES_NONE)
         {
             array[count].slot = i;
             array[count].age = slotMon->sOverworldEncounterAge;
@@ -1181,7 +1198,7 @@ static void SortOWEAges(void)
             break;
     }
 
-    for (i = 1; i < numActive; i++)
+    for (i = 1; i < count; i++)
     {
         current = array[i];
         j = i - 1;
@@ -1195,10 +1212,14 @@ static void SortOWEAges(void)
         array[j + 1] = current;
     }
     
-    for (i = 0; i < numActive; i++)
+    for (i = 0; i < count; i++)
     {
-        slotMon = &gObjectEvents[GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(array[i].slot))];
-        slotMon->sOverworldEncounterAge = numActive - i;
+        objEventId = GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(array[i].slot));
+        if (objEventId < OBJECT_EVENTS_COUNT)
+        {
+            slotMon = &gObjectEvents[objEventId];
+            slotMon->sOverworldEncounterAge = count - i;
+        }
     }
 }
 
@@ -1304,6 +1325,7 @@ void DespawnOWEOnBattleStart(void)
 {
     struct ObjectEvent *owe;
     u8 localId = gSpecialVar_LastTalked;
+    u8 objEventId;
 
     if (sBattleOWEObjectEventId < OBJECT_EVENTS_COUNT)
     {
@@ -1319,7 +1341,11 @@ void DespawnOWEOnBattleStart(void)
     if (localId == 0)
         return;
 
-    owe = &gObjectEvents[GetObjectEventIdByLocalId(localId)];
+    objEventId = GetObjectEventIdByLocalId(localId);
+    if (objEventId >= OBJECT_EVENTS_COUNT)
+        return;
+
+    owe = &gObjectEvents[objEventId];
     if (!IsOverworldWildEncounter(owe, OWE_ANY))
         return;
 
@@ -1355,7 +1381,8 @@ u32 RemoveOldestGeneratedOWE(void)
         return OBJECT_EVENTS_COUNT;
 
     objectEventId = GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(oldestSlot));
-    RemoveObjectEvent(&gObjectEvents[objectEventId]);
+    if (objectEventId < OBJECT_EVENTS_COUNT)
+        RemoveObjectEvent(&gObjectEvents[objectEventId]);
     return objectEventId;
 }
 
@@ -1834,6 +1861,8 @@ void OWEApproachForBattle(struct ScriptContext *ctx)
 
     localId = VarGet(ScriptReadHalfword(ctx));
     objectEventId = GetObjectEventIdByLocalId(localId);
+    if (objectEventId >= OBJECT_EVENTS_COUNT)
+        return;
     owe = &gObjectEvents[objectEventId];
     
     if (!WE_OWE_APPROACH_FOR_BATTLE || !IsOverworldWildEncounter(owe, OWE_ANY))
@@ -2048,7 +2077,8 @@ bool32 TrySpawnFishingOWE(u8 rod, s16 x, s16 y)
     if (!CheckValidOWESpecies(species))
         return FALSE;
 
-    TryAndDespawnOldestGeneratedOWE_ToFreeObject(&dummyId);
+    if (GetNumberOfActiveOWEs(OWE_GENERATED) >= OWE_SPAWNS_MAX)
+        TryAndDespawnOldestGeneratedOWE_ToFreeObject(&dummyId);
 
     if (!CheckCanLoadOWE(species, isFemale, isShiny, x, y))
         return FALSE;
@@ -2107,7 +2137,8 @@ bool32 TrySpawnRockSmashOWE(s16 x, s16 y)
     if (!CheckValidOWESpecies(species))
         return FALSE;
 
-    TryAndDespawnOldestGeneratedOWE_ToFreeObject(&dummyId);
+    if (GetNumberOfActiveOWEs(OWE_GENERATED) >= OWE_SPAWNS_MAX)
+        TryAndDespawnOldestGeneratedOWE_ToFreeObject(&dummyId);
 
     if (!CheckCanLoadOWE(species, isFemale, isShiny, x, y))
         return FALSE;

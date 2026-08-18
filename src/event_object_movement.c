@@ -10941,7 +10941,7 @@ u8 MovementType_OverworldWildEncounter_ChasePlayer_Step8(struct ObjectEvent *obj
     if (!GetMonData(&gPlayerParty[0], MON_DATA_SANITY_IS_EGG))
     {
         u8 leadAbility = GetMonAbility(&gPlayerParty[0]);
-        u8 wildLevel = objectEvent->sOverworldEncounterLevel & ~OWE_NO_DESPAWN_FLAG;
+        u8 wildLevel = objectEvent->trainerRange_berryTreeId & 0x7F;
         u8 leadLevel = GetMonData(&gPlayerParty[0], MON_DATA_LEVEL);
 
         if (leadAbility == ABILITY_CUTE_CHARM && (Random() % 3) != 0)

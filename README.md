@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/v/release/Mickosis/Modern_Emerald?style=for-the-badge&logo=github)](https://github.com/Mickosis/Modern_Emerald/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**Pokémon Modern Emerald** is an enhanced edition of *Pokémon Emerald*. It delivers a modern, vibrant Hoenn adventure with essential **Quality of Life upgrades**, **Follower Pokémon**, **Custom Surfing Sprites**, and **Overworld Wild Encounters**—while strictly preserving 100% authentic Generation 3 battle mechanics, Pokémon stats, learnsets, and game balance.
+**Pokémon Modern Emerald** is an enhanced edition of *Pokémon Emerald*, built on the baseline of [Pokémon Emerald Legacy](https://github.com/cRz-Shadows/Pokemon_Emerald_Legacy). It delivers a modern, vibrant Hoenn adventure with essential **Quality of Life upgrades**, **Follower Pokémon**, **Custom Surfing Sprites**, and **Overworld Wild Encounters**—while strictly preserving 100% authentic Generation 3 battle mechanics, Pokémon stats, learnsets, and game balance.
 
 ---
 

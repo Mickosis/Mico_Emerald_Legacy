@@ -1,7 +1,9 @@
 #include "global.h"
 #include "sprite.h"
 #include "main.h"
+#include "overworld.h"
 #include "palette.h"
+#include "wild_encounter_ow.h"
 
 #define MAX_SPRITE_COPY_REQUESTS 64
 
@@ -751,6 +753,44 @@ s16 AllocSpriteTiles(u16 tileCount)
         ALLOC_SPRITE_TILE(i);
 
     return start;
+}
+
+bool32 CanAllocSpriteTiles(u16 tileCount)
+{
+    u16 i;
+    u16 numTilesFound;
+
+    if (tileCount == 0)
+        return TRUE;
+
+    i = gReservedSpriteTileCount;
+
+    for (;;)
+    {
+        while (SPRITE_TILE_IS_ALLOCATED(i))
+        {
+            i++;
+            if (i == TOTAL_OBJ_TILE_COUNT)
+                return FALSE;
+        }
+
+        numTilesFound = 1;
+
+        while (numTilesFound != tileCount)
+        {
+            i++;
+            if (i == TOTAL_OBJ_TILE_COUNT)
+                return FALSE;
+
+            if (!SPRITE_TILE_IS_ALLOCATED(i))
+                numTilesFound++;
+            else
+                break;
+        }
+
+        if (numTilesFound == tileCount)
+            return TRUE;
+    }
 }
 
 u8 SpriteTileAllocBitmapOp(u16 bit, u8 op)
@@ -1638,17 +1678,28 @@ u8 LoadSpritePalette(const struct SpritePalette *palette)
         return index;
 
     index = IndexOfSpritePaletteTag(TAG_NONE);
-
     if (index == 0xFF)
     {
-        return 0xFF;
+        if (gMain.callback2 == CB2_Overworld)
+        {
+            u32 count = GetNumberOfActiveOWEs(OWE_GENERATED);
+
+            for (; count > 0; count--)
+            {
+                RemoveOldestGeneratedOWE();
+                index = IndexOfSpritePaletteTag(TAG_NONE);
+                if (index != 0xFF)
+                    break;
+            }
+        }
+        
+        if (index == 0xFF)
+            return 0xFF;
     }
-    else
-    {
-        sSpritePaletteTags[index] = palette->tag;
-        DoLoadSpritePalette(palette->data, PLTT_ID(index));
-        return index;
-    }
+
+    sSpritePaletteTags[index] = palette->tag;
+    DoLoadSpritePalette(palette->data, PLTT_ID(index));
+    return index;
 }
 
 void LoadSpritePalettes(const struct SpritePalette *palettes)
@@ -1828,4 +1879,15 @@ static const u8 sSpanPerImage[4][4] =
 // i.e, a 32x32 sprite has span 4, because 1 << 4 == 16 == 4x4 tiles
 u32 GetSpanPerImage(u32 shape, u32 size) {
     return sSpanPerImage[shape][size];
+}
+
+u32 CountFreePaletteSlots(void)
+{
+    u32 i, count = 0;
+
+    for (i = gReservedSpritePaletteCount; i < 16; i++)
+        if (sSpritePaletteTags[i] == TAG_NONE)
+            count++;
+
+    return count;
 }

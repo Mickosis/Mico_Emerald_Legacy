@@ -15,6 +15,7 @@
 #include "constants/pokemon.h"
 #include "constants/easy_chat.h"
 #include "constants/trainer_hill.h"
+#include "config/wild_encounter.h"
 
 // Prevent cross-jump optimization.
 #define BLOCK_CROSS_JUMP asm("");
@@ -40,6 +41,16 @@
 #define ARRAY_COUNT(array) (size_t)(sizeof(array) / sizeof((array)[0]))
 
 #define OW_GFX_COMPRESS FALSE
+// OW_POKEMON_OBJECT_EVENTS: our follower Pokémon system already provides this functionality
+#define OW_POKEMON_OBJECT_EVENTS TRUE
+// OW_AMBIENT_CRIES config (normally in config/overworld.h in pokeemerald-expansion)
+#define OW_AMBIENT_CRIES_VANILLA        0
+#define OW_AMBIENT_CRIES_OWE_PRIORITY   1
+#define OW_AMBIENT_CRIES_OWE_ONLY       2
+#define OW_AMBIENT_CRIES_NONE           3
+#define OW_AMBIENT_CRIES                OW_AMBIENT_CRIES_VANILLA
+// OW_MON_WANDER_WALK: play walking animation while OWE wanders in place
+#define OW_MON_WANDER_WALK FALSE
 #define IS_POW_OF_TWO(n) (((n) & ((n)-1)) == 0)
 
 // GameFreak used a macro called "NELEMS", as evidenced by

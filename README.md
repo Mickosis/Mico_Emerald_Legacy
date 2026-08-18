@@ -21,10 +21,11 @@ This fork brings together the most popular modern **Quality of Life (QoL)** and 
 ## 🎮 Key Features & Enhancements
 
 ### 🐾 Visuals & Overworld Followers
+- **Overworld Wild Encounters (OWEs)**: Wild Pokémon physically appear, wander, chase, flee, or observe the player throughout tall grass, caves, and waters across Hoenn! Encountering them by running into them or pressing **A** seamlessly initiates wild battles. Features shiny sparkle animations, ambient cries, smart dynamic spawning/despawning, and full coexistence with player follower Pokémon.
 - **Overworld Follower Pokémon**: Full Generation 1–3 Pokémon (all 386 species + shiny forms) follow behind the player in the overworld!
 - **Interactive Dialogue & Emotions**: Turn around and press **A** to interact with your lead Pokémon. Your Pokémon responds with unique emotional reactions, sounds, and text dialogues based on friendship, status conditions, weather, map environment, and type effectiveness.
 - **Custom Surfing Overworld Sprites**: Over 79 Pokémon species across Generations 1–3 render with their unique, custom surfing overworld sprites and normal/shiny palettes (including Lapras, Blastoise, Kyogre, Swampert, Wailord, Gyarados, Latios, Latias, Rayquaza, and more), seamlessly falling back to the classic surf blob for any other species.
-- **Always Enabled by Default**: Followers and custom surfing sprites are active whenever you travel with your Pokémon without requiring complex configuration menus.
+- **Always Enabled by Default**: Followers, overworld wild encounters, and custom surfing sprites are active whenever you travel across Hoenn without requiring complex configuration menus.
 - **Authentic Vanilla Emerald Legacy Core**: Every single Pokémon base stat, learnset, TM/HM distribution, encounter table, and battle mechanic remains 100% authentic to base *Pokémon Emerald Legacy*.
 
 ### 🎒 Quality of Life & Training

@@ -49,18 +49,16 @@ enum {
 
 static u16 FeebasRandom(void);
 static void FeebasSeedRng(u16 seed);
-static bool8 IsWildLevelAllowedByRepel(u8 level);
 static void ApplyFluteEncounterRateMod(u32 *encRate);
 static void ApplyCleanseTagEncounterRateMod(u32 *encRate);
 static bool8 TryGetAbilityInfluencedWildMonIndex(const struct WildPokemon *wildMon, u8 type, u8 ability, u8 *monIndex, u32 size);
-static bool8 IsAbilityAllowingEncounter(u8 level);
 
 EWRAM_DATA static u8 sWildEncountersDisabled = 0;
 EWRAM_DATA static u32 sFeebasRngValue = 0;
 
 #include "data/wild_encounters.h"
 
-static const struct WildPokemon sWildFeebas = {20, 25, SPECIES_FEEBAS};
+const struct WildPokemon gWildFeebas = {20, 25, SPECIES_FEEBAS};
 
 static const u16 sRoute119WaterTileData[] =
 {
@@ -106,18 +104,16 @@ static u16 GetFeebasFishingSpotId(s16 targetX, s16 targetY, u8 section)
     return spotId + 1;
 }
 
-static bool8 CheckFeebas(void)
+bool8 CheckFeebasAtCoords(s16 x, s16 y)
 {
     u8 i;
     u16 feebasSpots[NUM_FEEBAS_SPOTS];
-    s16 x, y;
     u8 route119Section = 0;
     u16 spotId;
 
     if (gSaveBlock1Ptr->location.mapGroup == MAP_GROUP(ROUTE119)
      && gSaveBlock1Ptr->location.mapNum == MAP_NUM(ROUTE119))
     {
-        GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
         x -= MAP_OFFSET;
         y -= MAP_OFFSET;
 
@@ -151,7 +147,7 @@ static bool8 CheckFeebas(void)
                 i++;
         }
 
-        // Check which fishing spot the player is at, and see if
+        // Check which fishing spot the coords are at, and see if
         // it matches any of the Feebas spots.
         spotId = GetFeebasFishingSpotId(x, y, route119Section);
         for (i = 0; i < NUM_FEEBAS_SPOTS; i++)
@@ -161,6 +157,13 @@ static bool8 CheckFeebas(void)
         }
     }
     return FALSE;
+}
+
+static bool8 CheckFeebas(void)
+{
+    s16 x, y;
+    GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
+    return CheckFeebasAtCoords(x, y);
 }
 
 static u16 FeebasRandom(void)
@@ -261,7 +264,7 @@ static u8 ChooseWildMonIndex_Fishing(u8 rod)
     return wildMonIndex;
 }
 
-static u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon)
+u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon)
 {
     u8 min;
     u8 max;
@@ -298,7 +301,7 @@ static u8 ChooseWildMonLevel(const struct WildPokemon *wildPokemon)
     return min + rand;
 }
 
-static u16 GetCurrentMapWildMonHeaderId(void)
+u16 GetCurrentMapWildMonHeaderId(void)
 {
     u16 i;
 
@@ -582,7 +585,7 @@ static u8 PickWildMonNature(void)
     return Random() % NUM_NATURES;
 }
 
-static void CreateWildMon(u16 species, u8 level)
+void CreateWildMon(u16 species, u8 level)
 {
     bool32 checkCuteCharm;
 
@@ -621,7 +624,7 @@ static void CreateWildMon(u16 species, u8 level)
 }
 #define TRY_GET_ABILITY_INFLUENCED_WILD_MON_INDEX(wildPokemon, type, ability, ptr, count) TryGetAbilityInfluencedWildMonIndex(wildPokemon, type, ability, ptr, count)
 
-static bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 area, u8 flags)
+bool8 TryGenerateWildMon(const struct WildPokemonInfo *wildMonInfo, u8 area, u8 flags)
 {
     u8 wildMonIndex = 0;
     u8 level;
@@ -666,7 +669,7 @@ static u16 GenerateFishingWildMon(const struct WildPokemonInfo *wildMonInfo, u8 
     return wildMonInfo->wildPokemon[wildMonIndex].species;
 }
 
-static bool8 SetUpMassOutbreakEncounter(u8 flags)
+bool8 SetUpMassOutbreakEncounter(u8 flags)
 {
     u16 i;
 
@@ -680,7 +683,7 @@ static bool8 SetUpMassOutbreakEncounter(u8 flags)
     return TRUE;
 }
 
-static bool8 DoMassOutbreakEncounterTest(void)
+bool8 DoMassOutbreakEncounterTest(void)
 {
     if (gSaveBlock1Ptr->outbreakPokemonSpecies != SPECIES_NONE
      && gSaveBlock1Ptr->location.mapNum == gSaveBlock1Ptr->outbreakLocationMapNum
@@ -740,7 +743,7 @@ static bool8 AllowWildCheckOnNewMetatile(void)
         return TRUE;
 }
 
-static bool8 AreLegendariesInSootopolisPreventingEncounters(void)
+bool8 AreLegendariesInSootopolisPreventingEncounters(void)
 {
     if (gSaveBlock1Ptr->location.mapGroup != MAP_GROUP(SOOTOPOLIS_CITY)
      || gSaveBlock1Ptr->location.mapNum != MAP_NUM(SOOTOPOLIS_CITY))
@@ -985,9 +988,9 @@ void FishingWildEncounter(u8 rod)
 
     if (CheckFeebas() == TRUE)
     {
-        u8 level = ChooseWildMonLevel(&sWildFeebas);
+        u8 level = ChooseWildMonLevel(&gWildFeebas);
 
-        species = sWildFeebas.species;
+        species = gWildFeebas.species;
         CreateWildMon(species, level);
     }
     else
@@ -1073,7 +1076,7 @@ bool8 UpdateRepelCounter(void)
     return FALSE;
 }
 
-static bool8 IsWildLevelAllowedByRepel(u8 wildLevel)
+bool8 IsWildLevelAllowedByRepel(u8 wildLevel)
 {
     u8 i;
 
@@ -1096,7 +1099,7 @@ static bool8 IsWildLevelAllowedByRepel(u8 wildLevel)
     return FALSE;
 }
 
-static bool8 IsAbilityAllowingEncounter(u8 level)
+bool8 IsAbilityAllowingEncounter(u8 level)
 {
     u8 ability;
 

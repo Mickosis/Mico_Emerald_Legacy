@@ -937,3 +937,14 @@ void LoadMapTilesetPalettes(struct MapLayout const *mapLayout)
         LoadSecondaryTilesetPalette(mapLayout);
     }
 }
+
+bool32 AreCoordsInsideMap(u8 mapGroup, u8 mapNum, s16 x, s16 y)
+{
+    const struct MapHeader *mapHeader = Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum);
+    return (x >= 0 && x < mapHeader->mapLayout->width && y >= 0 && y < mapHeader->mapLayout->height);
+}
+
+bool32 AreCoordsInsidePlayerMap(s16 x, s16 y)
+{
+    return AreCoordsInsideMap(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum, x, y);
+}

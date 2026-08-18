@@ -385,6 +385,11 @@
 #define OBJ_EVENT_ID_CAMERA 0x7F
 #define OBJ_EVENT_ID_FOLLOWER 0xFE
 
+// Generated OWEs use Local IDs 249-252 (OWE_SPAWNS_MAX = 4 slots)
+#define LOCALID_OW_ENCOUNTER_END              252
+#define IS_LOCALID_GENERATED_OWE(localId)     ((localId) <= LOCALID_OW_ENCOUNTER_END \
+                                               && (localId) > (LOCALID_OW_ENCOUNTER_END - OWE_SPAWNS_MAX))
+
 // Object event local ids referenced in C files
 #define LOCALID_ROUTE111_PLAYER_FALLING 45
 #define LOCALID_BIRTH_ISLAND_EXTERIOR_ROCK 1

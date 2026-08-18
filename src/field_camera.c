@@ -11,6 +11,7 @@
 #include "rotating_gate.h"
 #include "sprite.h"
 #include "text.h"
+#include "wild_encounter_ow.h"
 
 EWRAM_DATA bool8 gUnusedBikeCameraAheadPanback = FALSE;
 
@@ -416,6 +417,7 @@ void CameraUpdate(void)
         SetBerryTreesSeen();
         AddCameraTileOffset(&sFieldCameraOffset, deltaX * 2, deltaY * 2);
         RedrawMapSlicesForCameraUpdate(&sFieldCameraOffset, deltaX * 2, deltaY * 2);
+        TryDespawnOWEsCrossingMapConnection();
     }
 
     AddCameraPixelOffset(&sFieldCameraOffset, movementSpeedX, movementSpeedY);

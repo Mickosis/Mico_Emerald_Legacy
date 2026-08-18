@@ -42,6 +42,9 @@ Welcome to **Mico's Pokémon Emerald Legacy**. This document serves as the perma
 4. **Overworld & Follower Coexistence**:
    - Follower Pokémon and wild overworld spawns share the GBA 16-sprite object event limit. Always use dynamic replacement routines (`TryAndDespawnOldestGeneratedOWE_ToFreeObject`) to prevent sprite starvation crashes.
 
+5. **Test Patch Destination Protocol**:
+   - When generating local test `.bps` patches for verification, **always ask the user** for their preferred destination folder (e.g. `Downloads/`, `Desktop/`) rather than hardcoding a destination path.
+
 ---
 
 ## 🏷️ Commit Message & Semantic Versioning Rules
@@ -70,8 +73,8 @@ The repository automatically calculates version numbers and publishes GitHub Rel
 make -f make_tools.mk -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 
-# Generate local test BPS patch against clean Emerald base
-python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba /home/deck/Desktop/Micos_Emerald_Legacy_OWE_Test.bps
+# Generate local test BPS patch against clean Emerald base (ask user for preferred destination directory)
+python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba <preferred_path>/Micos_Emerald_Legacy_Test.bps
 
 # Check Git status & diffs
 git status

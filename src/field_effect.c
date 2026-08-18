@@ -787,6 +787,12 @@ void FieldEffectScript_LoadFadedPalette(u8 **script)
     (*script) += 4;
 }
 
+void FieldEffect_LoadFadedPalette(struct SpritePalette *palette)
+{
+    u8 paletteSlot = LoadSpritePalette(palette);
+    UpdateSpritePaletteWithWeather(paletteSlot);
+}
+
 void FieldEffectScript_LoadPalette(u8 **script)
 {
     struct SpritePalette *palette = (struct SpritePalette *)FieldEffectScript_ReadWord(script);

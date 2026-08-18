@@ -8,4 +8,14 @@
 
 #define NUM_ALTERING_CAVE_TABLES 9
 
+#define HEADER_NONE 0xFFFF
+
+#define WILD_AREA_LAND      0
+#define WILD_AREA_WATER     1
+#define WILD_AREA_ROCKS     2
+#define WILD_AREA_FISHING   3
+
+#define WILD_CHECK_REPEL    (1 << 0)
+#define WILD_CHECK_KEEN_EYE (1 << 1)
+
 #endif // GUARD_CONSTANTS_WILD_ENCOUNTER_H

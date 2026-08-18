@@ -329,5 +329,7 @@ u8 SpriteTileAllocBitmapOp(u16 bit, u8 op);
 void ClearSpriteCopyRequests(void);
 void ResetAffineAnimData(void);
 u32 GetSpanPerImage(u32 shape, u32 size);
+bool32 CanAllocSpriteTiles(u16 tileCount);
+u32 CountFreePaletteSlots(void);
 
 #endif //GUARD_SPRITE_H

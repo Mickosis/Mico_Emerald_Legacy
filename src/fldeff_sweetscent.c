@@ -14,6 +14,7 @@
 #include "sprite.h"
 #include "task.h"
 #include "wild_encounter.h"
+#include "wild_encounter_ow.h"
 #include "constants/field_effects.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
@@ -51,6 +52,7 @@ static void StartSweetScentFieldEffect(void)
 {
     u8 taskId;
 
+    SetInstantOWESpawnTimer();
     PlaySE(SE_M_SWEET_SCENT);
     CpuFastCopy(gPlttBufferUnfaded, gPaletteDecompressionBuffer, PLTT_SIZE);
     CpuFastCopy(gPlttBufferFaded, gPlttBufferUnfaded, PLTT_SIZE);

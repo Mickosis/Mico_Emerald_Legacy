@@ -11,6 +11,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "trig.h"
+#include "wild_encounter_ow.h"
 #include "constants/event_objects.h"
 #include "constants/field_effects.h"
 #include "constants/rgb.h"
@@ -64,6 +65,9 @@ void SetUpShadow(struct ObjectEvent *objectEvent, struct Sprite *sprite) {
 void SetUpReflection(struct ObjectEvent *objectEvent, struct Sprite *sprite, bool8 stillReflection)
 {
     struct Sprite *reflectionSprite;
+
+    if (IsOverworldWildEncounter(objectEvent, OWE_GENERATED))
+        return;
 
     reflectionSprite = &gSprites[CreateCopySpriteAt(sprite, sprite->x, sprite->y, 152)];
     reflectionSprite->callback = UpdateObjectReflectionSprite;
@@ -1883,3 +1887,24 @@ static const s8 sFigure8YOffsets[FIGURE_8_LENGTH] = {
     -1,  0, -1, -1,  0, -1, -1,  0,
     -1, -1, -1, -1, -1, -1, -1, -2,
 };
+
+u32 FldEff_OWE_SpawnAnim(void)
+{
+    u8 spriteId;
+    enum SpawnDespawnTypeOWE spawnAnim = gFieldEffectArguments[2];
+    u32 visual = gOverworldWildEncounterFieldEffectInfo[spawnAnim].visual;
+    s16 xOffset = gOverworldWildEncounterFieldEffectInfo[spawnAnim].xOffset;
+    s16 yOffset = gOverworldWildEncounterFieldEffectInfo[spawnAnim].yOffset;
+    struct SpritePalette palette = GetOWESpawnDespawnAnimFldEffPalette(spawnAnim);
+
+    FieldEffect_LoadFadedPalette(&palette);
+    SetSpritePosToOffsetMapCoords((s16 *)&gFieldEffectArguments[0], (s16 *)&gFieldEffectArguments[1], 8, 0);
+    spriteId = CreateSpriteAtEnd(gFieldEffectObjectTemplatePointers[visual], gFieldEffectArguments[0] + xOffset, gFieldEffectArguments[1] + yOffset, 0);
+    if (spriteId != MAX_SPRITES)
+    {
+        struct Sprite *sprite = &gSprites[spriteId];
+        sprite->coordOffsetEnabled = TRUE;
+        sprite->oam.priority = 2;
+    }
+    return spriteId;
+}

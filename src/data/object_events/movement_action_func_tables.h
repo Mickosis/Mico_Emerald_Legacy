@@ -161,8 +161,11 @@ u8 MovementAction_RestoreAnimation_Step0(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_SetInvisible_Step0(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_SetVisible_Step0(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_EmoteExclamationMark_Step0(struct ObjectEvent *, struct Sprite *);
+u8 MovementAction_EmoteExclamationMark_Step1(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_EmoteQuestionMark_Step0(struct ObjectEvent *, struct Sprite *);
+u8 MovementAction_EmoteQuestionMark_Step1(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_EmoteHeart_Step0(struct ObjectEvent *, struct Sprite *);
+u8 MovementAction_EmoteHeart_Step1(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_RevealTrainer_Step0(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_RevealTrainer_Step1(struct ObjectEvent *, struct Sprite *);
 u8 MovementAction_RockSmashBreak_Step0(struct ObjectEvent *, struct Sprite *);
@@ -1205,16 +1208,19 @@ u8 (*const gMovementActionFuncs_SetVisible[])(struct ObjectEvent *, struct Sprit
 
 u8 (*const gMovementActionFuncs_EmoteExclamationMark[])(struct ObjectEvent *, struct Sprite *) = {
     MovementAction_EmoteExclamationMark_Step0,
+    MovementAction_EmoteExclamationMark_Step1,
     MovementAction_Finish,
 };
 
 u8 (*const gMovementActionFuncs_EmoteQuestionMark[])(struct ObjectEvent *, struct Sprite *) = {
     MovementAction_EmoteQuestionMark_Step0,
+    MovementAction_EmoteQuestionMark_Step1,
     MovementAction_Finish,
 };
 
 u8 (*const gMovementActionFuncs_EmoteHeart[])(struct ObjectEvent *, struct Sprite *) = {
     MovementAction_EmoteHeart_Step0,
+    MovementAction_EmoteHeart_Step1,
     MovementAction_Finish,
 };
 

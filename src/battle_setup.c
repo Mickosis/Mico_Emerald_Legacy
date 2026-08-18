@@ -37,6 +37,7 @@
 #include "field_control_avatar.h"
 #include "mirage_tower.h"
 #include "field_screen_effect.h"
+#include "wild_encounter_ow.h"
 #include "data.h"
 #include "constants/battle_frontier.h"
 #include "constants/battle_setup.h"
@@ -369,6 +370,7 @@ static void Task_BattleStart(u8 taskId)
             SetMainCallback2(CB2_InitBattle);
             RestartWildEncounterImmunitySteps();
             ClearPoisonStepCounter();
+            DespawnOWEOnBattleStart();
             DestroyTask(taskId);
         }
         break;

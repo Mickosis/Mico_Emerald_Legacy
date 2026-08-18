@@ -543,5 +543,6 @@ u8 (*const gMovementTypeFuncs_Despawn_OverworldWildEncounter[])(struct ObjectEve
     MovementType_OverworldWildEncounter_Despawn_Step8,
     MovementType_OverworldWildEncounter_Common_Step9,
     MovementType_OverworldWildEncounter_Despawn_Step10,
-    MovementType_OverworldWildEncounter_Despawn_Step11
+    MovementType_OverworldWildEncounter_Despawn_Step11,
+    MovementType_OverworldWildEncounter_Common_Step12
 };

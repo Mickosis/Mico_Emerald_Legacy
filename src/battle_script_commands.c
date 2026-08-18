@@ -3355,7 +3355,7 @@ static void Cmd_getexp(void)
             u16 calculatedExp;
             s32 viaSentIn;
 
-            for (viaSentIn = 0, gExpAllMessCheck = FALSE; i < PARTY_SIZE; i++)
+            for (viaSentIn = 0, gExpAllMessCheck = FlagGet(FLAG_EXP_ALL); i < PARTY_SIZE; i++)
             {
                 if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE || GetMonData(&gPlayerParty[i], MON_DATA_HP) == 0)
                     continue;
@@ -3450,7 +3450,6 @@ static void Cmd_getexp(void)
                     // Added EXP. ALL to EXP. Share calculation 
                     if (FlagGet(FLAG_EXP_ALL))
                     {
-                        gExpAllMessCheck = TRUE;
                         gBattleMoveDamage += gExpShareExp;
                     }
                     else if (holdEffect == HOLD_EFFECT_EXP_SHARE)

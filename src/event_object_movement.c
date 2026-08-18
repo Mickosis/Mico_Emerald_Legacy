@@ -10929,6 +10929,8 @@ u8 MovementType_OverworldWildEncounter_Common_Step7(struct ObjectEvent *objectEv
 u8 MovementType_OverworldWildEncounter_ChasePlayer_Step8(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     u8 direction = DetermineObjectEventDirectionFromObject(&gObjectEvents[gPlayerAvatar.objectEventId], objectEvent);
+    u8 emoteAction = MOVEMENT_ACTION_EMOTE_EXCLAMATION_MARK;
+
     SetObjectEventDirection(objectEvent, direction);
     if (IsOWENextToPlayer(objectEvent))
     {
@@ -10936,7 +10938,25 @@ u8 MovementType_OverworldWildEncounter_ChasePlayer_Step8(struct ObjectEvent *obj
         return FALSE;
     }
 
-    ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_EMOTE_EXCLAMATION_MARK);
+    if (!GetMonData(&gPlayerParty[0], MON_DATA_SANITY_IS_EGG))
+    {
+        u8 leadAbility = GetMonAbility(&gPlayerParty[0]);
+        u8 wildLevel = objectEvent->sOverworldEncounterLevel & ~OWE_NO_DESPAWN_FLAG;
+        u8 leadLevel = GetMonData(&gPlayerParty[0], MON_DATA_LEVEL);
+
+        if (leadAbility == ABILITY_CUTE_CHARM && (Random() % 3) != 0)
+        {
+            emoteAction = MOVEMENT_ACTION_EMOTE_HEART;
+        }
+        else if (leadAbility == ABILITY_INTIMIDATE && leadLevel > wildLevel && (Random() % 2) == 0)
+        {
+            emoteAction = MOVEMENT_ACTION_EMOTE_QUESTION_MARK;
+            direction = GetOppositeDirection(direction);
+            SetObjectEventDirection(objectEvent, direction);
+        }
+    }
+
+    ObjectEventSetSingleMovement(objectEvent, sprite, emoteAction);
     PlaySE(SE_PIN);
     sprite->sTypeFuncId = 9;
     return FALSE;

@@ -110,7 +110,7 @@ static bool8 ObjectEventExecSingleMovementAction(struct ObjectEvent *, struct Sp
 static bool32 UpdateMonMoveInPlace(struct ObjectEvent *, struct Sprite *);
 static void SetMovementDelay(struct Sprite *, s16);
 static bool8 WaitForMovementDelay(struct Sprite *);
-static u8 GetCollisionInDirection(struct ObjectEvent *, u8);
+u8 GetCollisionInDirection(struct ObjectEvent *, u8);
 static u32 GetCopyDirection(u8, u32, u32);
 static void TryEnableObjectEventAnim(struct ObjectEvent *, struct Sprite *);
 static void ObjectEventExecHeldMovementAction(struct ObjectEvent *, struct Sprite *);
@@ -1538,7 +1538,7 @@ static bool8 GetAvailableObjectEventId(u16 localId, u8 mapNum, u8 mapGroup, u8 *
     return FALSE;
 }
 
-static void RemoveObjectEvent(struct ObjectEvent *objectEvent)
+void RemoveObjectEvent(struct ObjectEvent *objectEvent)
 {
     objectEvent->active = FALSE;
     RemoveObjectEventInternal(objectEvent);
@@ -5942,7 +5942,7 @@ u8 GetTrainerFacingDirectionMovementType(u8 direction)
     return gTrainerFacingDirectionMovementTypes[direction];
 }
 
-static u8 GetCollisionInDirection(struct ObjectEvent *objectEvent, u8 direction)
+u8 GetCollisionInDirection(struct ObjectEvent *objectEvent, u8 direction)
 {
     s16 x = objectEvent->currentCoords.x;
     s16 y = objectEvent->currentCoords.y;
@@ -9373,12 +9373,15 @@ bool8 AreElevationsCompatible(u8 a, u8 b)
 
 void ScriptFaceEachOther(struct ScriptContext *ctx)
 {
-    u32 localIdOne = VarGet(ScriptReadHalfword(ctx));
-    u32 localIdTwo = VarGet(ScriptReadHalfword(ctx));
-    struct ObjectEvent *objectOne = &gObjectEvents[GetObjectEventIdByLocalId(localIdOne)];
-    struct ObjectEvent *objectTwo = &gObjectEvents[GetObjectEventIdByLocalId(localIdTwo)];
-    
-    Script_RequestEffects(SCREFF_V1 | SCREFF_HARDWARE);
+    u32 localIdOne;
+    u32 localIdTwo;
+    struct ObjectEvent *objectOne;
+    struct ObjectEvent *objectTwo;
+
+    localIdOne = VarGet(ScriptReadHalfword(ctx));
+    localIdTwo = VarGet(ScriptReadHalfword(ctx));
+    objectOne = &gObjectEvents[GetObjectEventIdByLocalId(localIdOne)];
+    objectTwo = &gObjectEvents[GetObjectEventIdByLocalId(localIdTwo)];
     
     ObjectEventsTurnToEachOther(objectOne, objectTwo);
 }
@@ -11013,13 +11016,15 @@ u8 MovementType_OverworldWildEncounter_FleePlayer_Step8(struct ObjectEvent *obje
 
 u8 MovementType_OverworldWildEncounter_FleePlayer_Step10(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
+    u8 direction;
+
     if (WE_OWE_FLEE_DESPAWN && sCollisionTimer >= OWE_FLEE_COLLISION_TIME)
     {
         RemoveObjectEvent(objectEvent);
         return FALSE;
     }
 
-    u8 direction = GetOppositeDirection(DetermineObjectEventDirectionFromObject(&gObjectEvents[gPlayerAvatar.objectEventId], objectEvent));
+    direction = GetOppositeDirection(DetermineObjectEventDirectionFromObject(&gObjectEvents[gPlayerAvatar.objectEventId], objectEvent));
     SetObjectEventDirection(objectEvent, direction);
     sprite->sTypeFuncId = 11;
     return TRUE;

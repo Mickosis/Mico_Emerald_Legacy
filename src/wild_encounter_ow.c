@@ -85,6 +85,11 @@
 #define PlayerHasFollowerNPC() FALSE
 #define GetFollowerNPCObjectId() 0
 
+static const u8 sStandardDirections[4] = {DIR_SOUTH, DIR_NORTH, DIR_WEST, DIR_EAST};
+static EWRAM_DATA u32 sBattleOWEObjectEventId = 0;
+
+#define GetObjectEventIdByLocalId(localId) GetObjectEventIdByLocalIdAndMap((localId), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup)
+
 #define READ_OTID_FROM_SAVE T1_READ_32(gSaveBlock2Ptr->playerTrainerId)
 
 static inline bool32 ComputePlayerShinyOdds(u32 personality, u32 otId)
@@ -94,7 +99,7 @@ static inline bool32 ComputePlayerShinyOdds(u32 personality, u32 otId)
 
 enum __attribute__((packed)) CategoryOWE
 {
-    // If Roamers are used, they will exist as values, implicitly, within this enum.
+    OWE_CATEGORY_ROAMER = 0,
     OWE_CATEGORY_MASS_OUTBREAK = ROAMER_COUNT,
     OWE_CATEGORY_FEEBAS,
     OWE_CATEGORY_WILD,
@@ -332,7 +337,6 @@ void UpdateOverworldWildEncounter(void)
     objectEventTemplate.elevation = MapGridGetElevationAt(x, y);
     objectEventTemplate.movementType = OWE_GetMovementTypeFromSpecies(infoOWE.speciesId);
     objectEventTemplate.trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER;
-    objectEventTemplate.shiny = infoOWE.isShiny;
 
     objectEventId = GetObjectEventIdByLocalId(infoOWE.localId);
     owe = &gObjectEvents[objectEventId];
@@ -348,10 +352,11 @@ void UpdateOverworldWildEncounter(void)
 
     owe = &gObjectEvents[objectEventId];
     owe->disableCoveringGroundEffects = TRUE;
+    owe->shiny = infoOWE.isShiny;
     owe->sOverworldEncounterLevel = infoOWE.noDespawn ? (infoOWE.level | OWE_NO_DESPAWN_FLAG) : infoOWE.level;
     owe->sOverworldEncounterCategory = infoOWE.category;
 
-    ObjectEventTurn(owe, gStandardDirections[Random() & 3]);
+    ObjectEventTurn(owe, sStandardDirections[Random() & 3]);
     SetNewOWESpawnCountdown();
 }
 
@@ -387,12 +392,19 @@ static enum TypeOWE GetOverworldWildEncounterType(struct ObjectEvent *owe)
 
 void StartWildBattleWithOWE(struct ScriptContext *ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 objEventId = GetObjectEventIdByLocalId(localId);
-    struct ObjectEvent *owe = &gObjectEvents[objEventId];
-    enum CategoryOWE category = GetOWECategory(owe);
+    u32 localId;
+    u32 objEventId;
+    struct ObjectEvent *owe;
+    enum CategoryOWE category;
+    u16 speciesId;
+    bool32 shiny;
+    u32 level;
+    u32 personality;
 
-    Script_RequestEffects(SCREFF_V1 | SCREFF_HARDWARE);
+    localId = VarGet(ScriptReadHalfword(ctx));
+    objEventId = GetObjectEventIdByLocalId(localId);
+    owe = &gObjectEvents[objEventId];
+    category = GetOWECategory(owe);
 
     assertf(objEventId < OBJECT_EVENTS_COUNT && IsOverworldWildEncounter(owe, OWE_ANY), "cannot start overworld wild encounter")
     {
@@ -404,10 +416,9 @@ void StartWildBattleWithOWE(struct ScriptContext *ctx)
     if (category < ROAMER_COUNT && StartWildBattleWithOWE_CheckRoamer(category))
         return;
 
-    u16 speciesId = OW_SPECIES(owe);
-    bool32 shiny = OW_SHINY(owe) ? TRUE : FALSE;
-    u32 level = owe->sOverworldEncounterLevel & ~OWE_NO_DESPAWN_FLAG;
-    u32 personality;
+    speciesId = OW_SPECIES(owe);
+    shiny = OW_SHINY(owe) ? TRUE : FALSE;
+    level = owe->sOverworldEncounterLevel & ~OWE_NO_DESPAWN_FLAG;
 
     assertf(level >= MIN_LEVEL && level <= MAX_LEVEL, "overworld wild encounter does not have valid level")
     {
@@ -433,18 +444,21 @@ void StartWildBattleWithOWE(struct ScriptContext *ctx)
     if (StartWildBattleWithOWE_CheckMassOutbreak(category, speciesId))
         return;
 
+    sBattleOWEObjectEventId = objEventId;
     BattleSetup_StartWildBattle();
 }
 
 void SetOverworldObjectSpecies(struct ScriptContext *ctx)
 {
-    u32 varId = ScriptReadHalfword(ctx);
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    struct ObjectEvent *object = &gObjectEvents[GetObjectEventIdByLocalId(localId)];
-    u16 speciesId = SPECIES_NONE;
+    u32 varId;
+    u32 localId;
+    struct ObjectEvent *object;
+    u16 speciesId;
 
-    Script_RequestEffects(SCREFF_V1);
-    Script_RequestWriteVar(varId);
+    varId = ScriptReadHalfword(ctx);
+    localId = VarGet(ScriptReadHalfword(ctx));
+    object = &gObjectEvents[GetObjectEventIdByLocalId(localId)];
+    speciesId = SPECIES_NONE;
 
     switch (object->graphicsId)
     {
@@ -514,17 +528,14 @@ void SetOverworldObjectSpecies(struct ScriptContext *ctx)
         break;
 
     case OBJ_EVENT_GFX_JIGGLYPUFF_DOLL:
-    case OBJ_EVENT_GFX_JIGGLYPUFF:
         speciesId = SPECIES_JIGGLYPUFF;
         break;
 
     case OBJ_EVENT_GFX_MEOWTH_DOLL:
-    case OBJ_EVENT_GFX_MEOWTH:
         speciesId = SPECIES_MEOWTH;
         break;
 
     case OBJ_EVENT_GFX_CLEFAIRY_DOLL:
-    case OBJ_EVENT_GFX_CLEFAIRY:
         speciesId = SPECIES_CLEFAIRY;
         break;
 
@@ -601,8 +612,6 @@ void SetOverworldObjectSpecies(struct ScriptContext *ctx)
         break;
 
     case OBJ_EVENT_GFX_BIG_LAPRAS_DOLL:
-    case OBJ_EVENT_GFX_LAPRAS_DOLL:
-    case OBJ_EVENT_GFX_LAPRAS:
         speciesId = SPECIES_LAPRAS;
         break;
 
@@ -770,9 +779,12 @@ void SetOverworldObjectSpecies(struct ScriptContext *ctx)
 static bool32 CreateEnemyPartyOWE(struct InfoOWE *info, s32 x, s32 y)
 {
     const struct WildPokemonInfo *wildMonInfo;
-    enum WildPokemonArea wildArea;
-    u32 headerId = GetCurrentMapWildMonHeaderId();
-    u32 metatileBehavior = MapGridGetMetatileBehaviorAt(x, y);
+    u32 headerId;
+    u32 metatileBehavior;
+    u8 wildArea;
+
+    headerId = GetCurrentMapWildMonHeaderId();
+    metatileBehavior = MapGridGetMetatileBehaviorAt(x, y);
 
     if (headerId == HEADER_NONE)
     {
@@ -882,19 +894,24 @@ void SetMinimumOWESpawnTimer(void)
 
 void TryTriggerOverworldWildEncounter(struct ObjectEvent *obstacle, struct ObjectEvent *collider)
 {
+    bool32 playerFollowerIsColliderOWE;
+    bool32 playerFollowerIsObstacleOWE;
+    struct ObjectEvent *wildMon;
+    enum CategoryOWE category;
+
     if (WE_OWE_NO_REPEL_DEXNAV_COLLISION && REPEL_STEP_COUNT)
         return;
 
-    bool32 playerFollowerIsColliderOWE = ((collider->isPlayer || collider->localId == OBJ_EVENT_ID_FOLLOWER)
-                                          && IsOverworldWildEncounter(obstacle, OWE_ANY));
-    bool32 playerFollowerIsObstacleOWE = ((obstacle->isPlayer || obstacle->localId == OBJ_EVENT_ID_FOLLOWER)
-                                          && IsOverworldWildEncounter(collider, OWE_ANY));
+    playerFollowerIsColliderOWE = ((collider->isPlayer || collider->localId == OBJ_EVENT_ID_FOLLOWER)
+                                  && IsOverworldWildEncounter(obstacle, OWE_ANY));
+    playerFollowerIsObstacleOWE = ((obstacle->isPlayer || obstacle->localId == OBJ_EVENT_ID_FOLLOWER)
+                                  && IsOverworldWildEncounter(collider, OWE_ANY));
 
     if (!playerFollowerIsColliderOWE && !playerFollowerIsObstacleOWE)
         return;
 
-    struct ObjectEvent *wildMon = playerFollowerIsColliderOWE ? obstacle : collider;
-    enum CategoryOWE category = GetOWECategory(wildMon);
+    wildMon = playerFollowerIsColliderOWE ? obstacle : collider;
+    category = GetOWECategory(wildMon);
     if (category < ROAMER_COUNT
      && !IsRoamerAt(gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum))
     {
@@ -1036,10 +1053,6 @@ static bool32 TrySelectTileForOWE(s32* outX, s32* outY)
     elevation = MapGridGetElevationAt(x, y);
 
     if (!AreCoordsInsidePlayerMap(x, y))
-        return FALSE;
-
-    // These elevations cause weird interactions, so spawns are prevented.
-    if (elevation == ELEVATION_TRANSITION || elevation == ELEVATION_MULTI_LEVEL)
         return FALSE;
 
     tileBehavior = MapGridGetMetatileBehaviorAt(x, y);
@@ -1299,16 +1312,18 @@ bool32 TryAndDespawnOldestGeneratedOWE_ToFreeObject(u8 *objectEventId)
 
 void DespawnOWEOnBattleStart(void)
 {
-    struct ObjectEvent *owe = &gObjectEvents[GetObjectEventIdByLocalId(gSpecialVar_LastTalked)];
+    struct ObjectEvent *owe;
+
+    if (gSpecialVar_LastTalked == 0)
+        return;
+
+    owe = &gObjectEvents[GetObjectEventIdByLocalId(gSpecialVar_LastTalked)];
     if (!IsOverworldWildEncounter(owe, OWE_ANY))
         return;
 
-    if (IsOverworldWildEncounter(owe, OWE_MANUAL))
-        FlagSet(GetObjectEventFlagIdByLocalIdAndMap(owe->localId, owe->mapNum, owe->mapGroup));
-
-    ClearObjectEvent(owe);
+    RemoveObjectEvent(owe);
     SetNewOWESpawnCountdown();
-    gSpecialVar_LastTalked = LOCALID_NONE;
+    gSpecialVar_LastTalked = 0;
 }
 
 void TryDespawnOWEsCrossingMapConnection(void)
@@ -1327,12 +1342,14 @@ void TryDespawnOWEsCrossingMapConnection(void)
 
 u32 RemoveOldestGeneratedOWE(void)
 {
-    u32 oldestSlot = GetOldestActiveOWESlot(TRUE);
+    u32 oldestSlot;
+    u32 objectEventId;
 
+    oldestSlot = GetOldestActiveOWESlot(TRUE);
     if (oldestSlot == OWE_INVALID_SPAWN_SLOT)
         return OBJECT_EVENTS_COUNT;
 
-    u32 objectEventId = GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(oldestSlot));
+    objectEventId = GetObjectEventIdByLocalId(GetLocalIdByOWESpawnSlot(oldestSlot));
     RemoveObjectEvent(&gObjectEvents[objectEventId]);
     return objectEventId;
 }
@@ -1357,8 +1374,11 @@ static void SetNewOWESpawnCountdown(void)
 
 static void DoOWESpawnAnim(struct ObjectEvent *owe)
 {
-    bool32 isShiny = OW_SHINY(owe) ? TRUE : FALSE;
+    bool32 isShiny;
     enum SpawnDespawnTypeOWE spawnAnimType;
+    u32 metatileBehavior;
+
+    isShiny = OW_SHINY(owe) ? TRUE : FALSE;
 
     if (WE_OWE_SHINY_SPARKLE && isShiny)
     {
@@ -1368,7 +1388,7 @@ static void DoOWESpawnAnim(struct ObjectEvent *owe)
     else
     {
         PlayOWECry(owe);
-        u32 metatileBehavior = MapGridGetMetatileBehaviorAt(owe->currentCoords.x, owe->currentCoords.y);
+        metatileBehavior = MapGridGetMetatileBehaviorAt(owe->currentCoords.x, owe->currentCoords.y);
         spawnAnimType = GetOWESpawnDespawnAnimType(metatileBehavior);
     }
 
@@ -1377,8 +1397,11 @@ static void DoOWESpawnAnim(struct ObjectEvent *owe)
 
 static void DoOWEDespawnAnim(struct ObjectEvent *owe)
 {
-    u32 metatileBehavior = MapGridGetMetatileBehaviorAt(owe->currentCoords.x, owe->currentCoords.y);
-    enum SpawnDespawnTypeOWE spawnAnimType = GetOWESpawnDespawnAnimType(metatileBehavior);
+    u32 metatileBehavior;
+    enum SpawnDespawnTypeOWE spawnAnimType;
+
+    metatileBehavior = MapGridGetMetatileBehaviorAt(owe->currentCoords.x, owe->currentCoords.y);
+    spawnAnimType = GetOWESpawnDespawnAnimType(metatileBehavior);
     MovementAction_OverworldEncounterSpawn(spawnAnimType, owe);
     if (OWE_ShouldPlayOWEFleeSound(owe))
         PlaySE(SE_FLEE);
@@ -1400,17 +1423,23 @@ static enum SpawnDespawnTypeOWE GetOWESpawnDespawnAnimType(u32 metatileBehavior)
 
 static void PlayOWECry(struct ObjectEvent *owe)
 {
-    if (!IsOverworldWildEncounter(owe, OWE_ANY))
-        return;
-    
-    struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
-    u16 speciesId = OW_SPECIES(owe);
-    s32 distanceX = owe->currentCoords.x - player->currentCoords.x;
-    s32 distanceY = owe->currentCoords.y - player->currentCoords.y;
-    u32 distanceMax = OWE_SPAWN_WIDTH_RADIUS + OWE_SPAWN_HEIGHT_RADIUS;
+    struct ObjectEvent *player;
+    u16 speciesId;
+    s32 distanceX;
+    s32 distanceY;
+    u32 distanceMax;
     u32 distance;
     u32 volume;
     s32 pan;
+
+    if (!IsOverworldWildEncounter(owe, OWE_ANY))
+        return;
+    
+    player = &gObjectEvents[gPlayerAvatar.objectEventId];
+    speciesId = OW_SPECIES(owe);
+    distanceX = owe->currentCoords.x - player->currentCoords.x;
+    distanceY = owe->currentCoords.y - player->currentCoords.y;
+    distanceMax = OWE_SPAWN_WIDTH_RADIUS + OWE_SPAWN_HEIGHT_RADIUS;
 
     if (distanceX > OWE_SPAWN_WIDTH_RADIUS)
         distanceX = OWE_SPAWN_WIDTH_RADIUS;
@@ -1487,6 +1516,11 @@ void RestoreSavedOWEBehaviorState(struct ObjectEvent *owe, struct Sprite *sprite
 // Returns TRUE if movement is restricted.
 bool32 CheckRestrictedOWEMovement(struct ObjectEvent *owe, u8 direction)
 {
+    s32 xCurrent;
+    s32 yCurrent;
+    s32 xNew;
+    s32 yNew;
+
     if (GetCollisionInDirection(owe, direction))
         return TRUE;
 
@@ -1495,10 +1529,10 @@ bool32 CheckRestrictedOWEMovement(struct ObjectEvent *owe, u8 direction)
      && CanAwareOWESeePlayer(owe))
         return FALSE;
 
-    s32 xCurrent = owe->currentCoords.x;
-    s32 yCurrent = owe->currentCoords.y;
-    s32 xNew = xCurrent + gDirectionToVectors[direction].x;
-    s32 yNew = yCurrent + gDirectionToVectors[direction].y;
+    xCurrent = owe->currentCoords.x;
+    yCurrent = owe->currentCoords.y;
+    xNew = xCurrent + gDirectionToVectors[direction].x;
+    yNew = yCurrent + gDirectionToVectors[direction].y;
 
     if (CheckRestrictedOWEMovementMetatile(xCurrent, yCurrent, xNew, yNew))
         return TRUE;
@@ -1525,11 +1559,14 @@ static bool32 CheckRestrictedOWEMovementAtCoords(struct ObjectEvent *owe, s32 xN
 
 static bool32 CheckRestrictedOWEMovementMetatile(s32 xCurrent, s32 yCurrent, s32 xNew, s32 yNew)
 {
+    u32 metatileBehaviourCurrent;
+    u32 metatileBehaviourNew;
+
     if (!WE_OWE_RESTRICT_METATILE)
         return FALSE;
 
-    u32 metatileBehaviourCurrent = MapGridGetMetatileBehaviorAt(xCurrent, yCurrent);
-    u32 metatileBehaviourNew = MapGridGetMetatileBehaviorAt(xNew, yNew);
+    metatileBehaviourCurrent = MapGridGetMetatileBehaviorAt(xCurrent, yCurrent);
+    metatileBehaviourNew = MapGridGetMetatileBehaviorAt(xNew, yNew);
 
     if (MetatileBehavior_IsLandWildEncounter(metatileBehaviourCurrent)
      && MetatileBehavior_IsLandWildEncounter(metatileBehaviourNew))
@@ -1560,6 +1597,16 @@ static bool32 CheckRestrictedOWEMovementMap(struct ObjectEvent *owe, s32 xNew, s
 
 bool32 CanAwareOWESeePlayer(struct ObjectEvent *owe)
 {
+    struct ObjectEvent *player;
+    u16 speciesId;
+    u32 viewDistance;
+    u32 viewWidth;
+    s32 halfWidth;
+    u8 direction;
+
+    if (owe == NULL)
+        return FALSE;
+
     if (owe->movementType == MOVEMENT_TYPE_WANDER_AROUND_OWE)
         return FALSE;
 
@@ -1568,12 +1615,12 @@ bool32 CanAwareOWESeePlayer(struct ObjectEvent *owe)
      && IsPlayerInsideOWEActiveDistance(owe))
         return TRUE;
 
-    struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
-    u16 speciesId = OW_SPECIES(owe);
-    u32 viewDistance = OWE_GetViewDistanceFromSpecies(speciesId);
-    u32 viewWidth = OWE_GetViewWidthFromSpecies(speciesId);
-    s32 halfWidth = (viewWidth - 1) / 2;
-    u8 direction = owe->facingDirection;
+    player = &gObjectEvents[gPlayerAvatar.objectEventId];
+    speciesId = OW_SPECIES(owe);
+    viewDistance = OWE_GetViewDistanceFromSpecies(speciesId);
+    viewWidth = OWE_GetViewWidthFromSpecies(speciesId);
+    halfWidth = (viewWidth - 1) / 2;
+    direction = owe->facingDirection;
 
     switch (direction)
     {
@@ -1619,25 +1666,32 @@ bool32 CanAwareOWESeePlayer(struct ObjectEvent *owe)
 static bool32 CanOWEReachPlayer(struct ObjectEvent *owe)
 {
     struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
-    return !IsElevationMismatchAt(owe->currentElevation, player->currentCoords.x, player->currentCoords.y);
+    return (owe->currentElevation == player->currentElevation || owe->currentElevation == 0 || player->currentElevation == 0);
 }
 
 bool32 IsPlayerInsideOWEActiveDistance(struct ObjectEvent *owe)
 {
-    struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
-    u32 distance = OWE_DEFAULT_CHASE_RANGE;
-    u16 speciesId = OW_SPECIES(owe);
+    struct ObjectEvent *player;
+    u32 distance;
+    u16 speciesId;
+    s32 absX;
+    s32 absY;
+    s32 diagonalDistance;
+
+    player = &gObjectEvents[gPlayerAvatar.objectEventId];
+    distance = OWE_DEFAULT_CHASE_RANGE;
+    speciesId = OW_SPECIES(owe);
 
     if (speciesId != SPECIES_NONE)
         distance = OWE_GetViewActiveDistanceFromSpecies(speciesId);
 
-    s32 absX = abs(player->currentCoords.x - owe->currentCoords.x);
-    s32 absY = abs(player->currentCoords.y - owe->currentCoords.y);
+    absX = abs(player->currentCoords.x - owe->currentCoords.x);
+    absY = abs(player->currentCoords.y - owe->currentCoords.y);
 
     if (absX > distance || absY > distance)
         return FALSE;
 
-    s32 diagonalDistance = (distance * 362) >> 8; // binary approximation of multiplying distance by sqrt(2)
+    diagonalDistance = (distance * 362) >> 8; // binary approximation of multiplying distance by sqrt(2)
     if ((absX + absY) > diagonalDistance)
         return FALSE;
 
@@ -1765,11 +1819,14 @@ static u8 CheckOWEPathToPlayerFromCollision(struct ObjectEvent *owe, u8 newDirec
 #define tObjectId data[0]
 void OWEApproachForBattle(struct ScriptContext *ctx)
 {
-    u32 localId = VarGet(ScriptReadHalfword(ctx));
-    u32 objectEventId = GetObjectEventIdByLocalId(localId);
-    struct ObjectEvent *owe = &gObjectEvents[objectEventId];
+    u32 localId;
+    u32 objectEventId;
+    struct ObjectEvent *owe;
+    u32 taskId;
 
-    Script_RequestEffects(SCREFF_V1 | SCREFF_HARDWARE);
+    localId = VarGet(ScriptReadHalfword(ctx));
+    objectEventId = GetObjectEventIdByLocalId(localId);
+    owe = &gObjectEvents[objectEventId];
     
     if (!WE_OWE_APPROACH_FOR_BATTLE || !IsOverworldWildEncounter(owe, OWE_ANY))
     {
@@ -1777,7 +1834,7 @@ void OWEApproachForBattle(struct ScriptContext *ctx)
         return;
     }
     
-    u32 taskId = CreateTask(Task_OWEApproachForBattle, 2);
+    taskId = CreateTask(Task_OWEApproachForBattle, 2);
     if (FindTaskIdByFunc(Task_OWEApproachForBattle) == TASK_NONE)
     {
         FreezeObjectEvent(owe);
@@ -1890,8 +1947,6 @@ const struct ObjectEventTemplate TryGetObjectEventTemplateForOWE(const struct Ob
     struct ObjectEventTemplate templateOWE;
     struct InfoOWE info;
     u16 speciesTemplate;
-    bool32 isShinyTemplate;
-    u32 levelTemplate;
     u32 x, y;
 
     if (template->trainerType != TRAINER_TYPE_OW_WILD_ENCOUNTER
@@ -1903,8 +1958,6 @@ const struct ObjectEventTemplate TryGetObjectEventTemplateForOWE(const struct Ob
     info.category = OWE_CATEGORY_WILD;
     
     speciesTemplate = SanitizeSpeciesId(templateOWE.graphicsId & OBJ_EVENT_GFX_SPECIES_MASK);
-    isShinyTemplate = templateOWE.shiny;
-    levelTemplate = templateOWE.sOverworldEncounterLevel;
     x = template->x;
     y = template->y;
 
@@ -1912,31 +1965,13 @@ const struct ObjectEventTemplate TryGetObjectEventTemplateForOWE(const struct Ob
     if (speciesTemplate)
         info.speciesId = speciesTemplate;
 
-    if (levelTemplate)
-        info.level = levelTemplate;
-
-    assertf((CheckValidOWESpecies(info.speciesId)
-        && info.level >= MIN_LEVEL
-        && info.level <= MAX_LEVEL)
-        || gObjectEvents[GetObjectEventIdByLocalId(template->localId)].active,
-        "invalid manual overworld encounter template")
+    if (!CheckValidOWESpecies(info.speciesId))
     {
-        if (!CheckValidOWESpecies(info.speciesId))
-        {
-            templateOWE.graphicsId = OBJ_EVENT_GFX_BOY_1;
-            templateOWE.trainerType = TRAINER_TYPE_NONE;
-            templateOWE.sOverworldEncounterLevel = 0;
-            templateOWE.movementType = MOVEMENT_TYPE_NONE;
-            return templateOWE;
-        }
-        else if (!(info.level >= MIN_LEVEL && info.level <= MAX_LEVEL))
-        {
-            info.level = MIN_LEVEL;
-        }
+        templateOWE.graphicsId = OBJ_EVENT_GFX_BOY_1;
+        templateOWE.trainerType = TRAINER_TYPE_NONE;
+        templateOWE.movementType = MOVEMENT_TYPE_NONE;
+        return templateOWE;
     }
-
-    if (isShinyTemplate)
-        info.isShiny = isShinyTemplate;
 
     info.isFemale = GetGenderFromSpeciesAndPersonality(info.speciesId, Random32()) == MON_FEMALE;
 
@@ -1944,8 +1979,6 @@ const struct ObjectEventTemplate TryGetObjectEventTemplateForOWE(const struct Ob
         templateOWE.movementType = OWE_GetMovementTypeFromSpecies(info.speciesId);
 
     templateOWE.graphicsId = GetGraphicsIdForOWE(&info);
-    templateOWE.shiny = info.isShiny;
-    templateOWE.sOverworldEncounterLevel = info.level;
     
     return templateOWE;
 }

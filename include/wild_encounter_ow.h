@@ -24,6 +24,12 @@ struct ScriptContext;
 #define RandomUniform(rng, min, max) ((Random() % ((max) - (min) + 1)) + (min))
 #endif
 
+#define OW_SHINY(owe) ((owe)->shiny)
+#define OW_FEMALE(owe) (FALSE)
+
+extern const struct SpritePalette gSpritePalette_GeneralFieldEffect0;
+extern const struct SpritePalette gSpritePalette_GeneralFieldEffect1;
+
 enum SpawnDespawnTypeOWE
 {
     OWE_SPAWN_ANIM_GRASS,

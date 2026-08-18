@@ -464,13 +464,7 @@ u8 (*const gMovementTypeFuncs_WanderAround_OverworldWildEncounter[])(struct Obje
     MovementType_OverworldWildEncounter_WanderAround_Step3,
     MovementType_OverworldWildEncounter_WanderAround_Step4,
     MovementType_OverworldWildEncounter_WanderAround_Step5,
-    MovementType_WanderAround_Step6,
-    MovementType_OverworldWildEncounter_Common_Step7,
-    MovementType_None_Step0,
-    MovementType_None_Step0,
-    MovementType_None_Step0,
-    MovementType_None_Step0,
-    MovementType_None_Step0
+    MovementType_WanderAround_Step6
 };
 
 u8 (*const gMovementTypeFuncs_ChasePlayer_OverworldWildEncounter[])(struct ObjectEvent *, struct Sprite *) = {
@@ -549,6 +543,5 @@ u8 (*const gMovementTypeFuncs_Despawn_OverworldWildEncounter[])(struct ObjectEve
     MovementType_OverworldWildEncounter_Despawn_Step8,
     MovementType_OverworldWildEncounter_Common_Step9,
     MovementType_OverworldWildEncounter_Despawn_Step10,
-    MovementType_OverworldWildEncounter_Despawn_Step11,
-    MovementType_None_Step0
+    MovementType_OverworldWildEncounter_Despawn_Step11
 };

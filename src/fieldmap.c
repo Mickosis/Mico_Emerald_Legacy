@@ -941,7 +941,8 @@ void LoadMapTilesetPalettes(struct MapLayout const *mapLayout)
 bool32 AreCoordsInsideMap(u8 mapGroup, u8 mapNum, s16 x, s16 y)
 {
     const struct MapHeader *mapHeader = Overworld_GetMapHeaderByGroupAndId(mapGroup, mapNum);
-    return (x >= 0 && x < mapHeader->mapLayout->width && y >= 0 && y < mapHeader->mapLayout->height);
+    return (x >= MAP_OFFSET && x < mapHeader->mapLayout->width + MAP_OFFSET
+         && y >= MAP_OFFSET && y < mapHeader->mapLayout->height + MAP_OFFSET);
 }
 
 bool32 AreCoordsInsidePlayerMap(s16 x, s16 y)

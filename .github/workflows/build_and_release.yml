@@ -2,15 +2,8 @@ name: Build ROM & Publish Release
 
 on:
   push:
+    branches: [ main ]
     tags: [ 'v*' ]
-    branches: [ main ]
-    paths-ignore:
-      - '**.md'
-      - 'LICENSE'
-      - '.gitignore'
-      - '.github/copilot-instructions.md'
-  pull_request:
-    branches: [ main ]
     paths-ignore:
       - '**.md'
       - 'LICENSE'

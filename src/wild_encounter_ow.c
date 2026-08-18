@@ -189,12 +189,12 @@ static enum SpawnDespawnTypeOWE GetOWESpawnDespawnAnimType(u32 metatileBehavior)
 static void PlayOWECry(struct ObjectEvent *owe);
 static struct ObjectEvent *GetRandomOWEObjectEvent(void);
 static bool32 OWE_ShouldPlayOWEFleeSound(struct ObjectEvent *owe);
-static bool32 CheckRestrictedOWEMovementAtCoords(struct ObjectEvent *owe, s32 xNew, s32 yNew, enum Direction newDirection, enum Direction collisionDirection);
+static bool32 CheckRestrictedOWEMovementAtCoords(struct ObjectEvent *owe, s32 xNew, s32 yNew, u8 newDirection, u8 collisionDirection);
 static bool32 CheckRestrictedOWEMovementMetatile(s32 xCurrent, s32 yCurrent, s32 xNew, s32 yNew);
 static bool32 CheckRestrictedOWEMovementMap(struct ObjectEvent *owe, s32 xNew, s32 yNew);
 static bool32 CanOWEReachPlayer(struct ObjectEvent *owe);
 static bool32 IsOWENextToObject(struct ObjectEvent *owe, struct ObjectEvent *object);
-static enum Direction CheckOWEPathToPlayerFromCollision(struct ObjectEvent *owe, enum Direction newDirection);
+static u8 CheckOWEPathToPlayerFromCollision(struct ObjectEvent *owe, u8 newDirection);
 static void Task_OWEApproachForBattle(u8 taskId);
 static bool32 CheckValidOWESpecies(u16 speciesId);
 
@@ -1485,7 +1485,7 @@ void RestoreSavedOWEBehaviorState(struct ObjectEvent *owe, struct Sprite *sprite
 #undef sJumpTimer
 
 // Returns TRUE if movement is restricted.
-bool32 CheckRestrictedOWEMovement(struct ObjectEvent *owe, enum Direction direction)
+bool32 CheckRestrictedOWEMovement(struct ObjectEvent *owe, u8 direction)
 {
     if (GetCollisionInDirection(owe, direction))
         return TRUE;
@@ -1509,7 +1509,7 @@ bool32 CheckRestrictedOWEMovement(struct ObjectEvent *owe, enum Direction direct
     return FALSE;
 }
 
-static bool32 CheckRestrictedOWEMovementAtCoords(struct ObjectEvent *owe, s32 xNew, s32 yNew, enum Direction newDirection, enum Direction collisionDirection)
+static bool32 CheckRestrictedOWEMovementAtCoords(struct ObjectEvent *owe, s32 xNew, s32 yNew, u8 newDirection, u8 collisionDirection)
 {
     if (CheckRestrictedOWEMovementMetatile(owe->currentCoords.x, owe->currentCoords.y, xNew, yNew))
         return FALSE;
@@ -1573,7 +1573,7 @@ bool32 CanAwareOWESeePlayer(struct ObjectEvent *owe)
     u32 viewDistance = OWE_GetViewDistanceFromSpecies(speciesId);
     u32 viewWidth = OWE_GetViewWidthFromSpecies(speciesId);
     s32 halfWidth = (viewWidth - 1) / 2;
-    enum Direction direction = owe->facingDirection;
+    u8 direction = owe->facingDirection;
 
     switch (direction)
     {
@@ -1661,7 +1661,7 @@ static bool32 IsOWENextToObject(struct ObjectEvent *owe, struct ObjectEvent *obj
     return TRUE;
 }
 
-enum Direction DirectionOfOWEToPlayerFromCollision(struct ObjectEvent *owe)
+u8 DirectionOfOWEToPlayerFromCollision(struct ObjectEvent *owe)
 {
     struct ObjectEvent *player = &gObjectEvents[gPlayerAvatar.objectEventId];
 
@@ -1714,7 +1714,7 @@ u32 GetApproachingOWEDistanceToPlayer(struct ObjectEvent *owe, bool32 *equalDist
         return absX;
 }
 
-u32 GetOWEWalkMovementActionInDirectionWithSpeed(enum Direction direction, enum SpeedOWE speed)
+u32 GetOWEWalkMovementActionInDirectionWithSpeed(u8 direction, enum SpeedOWE speed)
 {
     switch (speed)
     {
@@ -1730,7 +1730,7 @@ u32 GetOWEWalkMovementActionInDirectionWithSpeed(enum Direction direction, enum 
     }
 }
 
-static enum Direction CheckOWEPathToPlayerFromCollision(struct ObjectEvent *owe, enum Direction newDirection)
+static u8 CheckOWEPathToPlayerFromCollision(struct ObjectEvent *owe, u8 newDirection)
 {
     s16 x = owe->currentCoords.x;
     s16 y = owe->currentCoords.y;
@@ -1796,7 +1796,7 @@ static void Task_OWEApproachForBattle(u8 taskId)
     bool32 oweNextToPlayer;
     bool32 oweNextToFollowerMon;
     u16 speciesId;
-    enum Direction direction;
+    u8 direction;
     u32 movementActionId;
     s16 x, y;
     u32 collidingObject;

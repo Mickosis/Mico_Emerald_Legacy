@@ -426,20 +426,10 @@ void StartWildBattleWithOWE(struct ScriptContext *ctx)
     }
 
     ZeroEnemyPartyMons();
-    personality = Random32();
-    if (OW_FEMALE(owe))
-    {
-        while (GetGenderFromSpeciesAndPersonality(speciesId, personality) != MON_FEMALE)
-            personality = Random32();
-    }
-    else if (gSpeciesInfo[speciesId].genderRatio != MON_GENDERLESS)
-    {
-        while (GetGenderFromSpeciesAndPersonality(speciesId, personality) != MON_MALE)
-            personality = Random32();
-    }
+    if (shiny)
+        FlagSet(FLAG_SHINY_CREATION);
 
-    CreateMon(&gEnemyParty[0], speciesId, level, USE_RANDOM_IVS, TRUE, personality, shiny ? OT_ID_SHINY : OT_ID_RANDOM_NO_SHINY, 0);
-    GiveMonInitialMoveset(&gEnemyParty[0]);
+    CreateWildMon(speciesId, level);
     
     if (StartWildBattleWithOWE_CheckMassOutbreak(category, speciesId))
         return;

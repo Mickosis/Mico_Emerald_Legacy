@@ -171,22 +171,19 @@ jobs:
 
             Built on top of [Pokémon Emerald Legacy](https://github.com/cRz-Shadows/Pokemon_Emerald_Legacy) with modern Quality of Life while **preserving 100% authentic Pokémon stats, movesets, learnsets, and battle mechanics**.
 
-            #### 📝 Changelog for this release:
+            #### 📝 What's Changed in this Release:
             ${{ steps.changelog.outputs.changes }}
 
-            #### 🌟 Included Features:
-            - **Overworld Follower Pokémon**: Full Generation 1–3 Pokémon (all 386 species + shiny forms) follow behind the player with emotional reactions and interactions (enabled by default).
-            - **Custom Surfing Overworld Sprites**: Over 79 Pokémon species render with custom surfing overworld sprites and normal/shiny palettes (enabled by default).
-            - **EXP. All Key Item**: Key Item from Mr. Stone toggling 50/50 party experience distribution + full EV gains.
-            - **HM Field Move Quality of Life**: Use HM field moves without teaching them to moveslots if you have the badge, HM in Bag, and a compatible Pokémon.
-
             #### 💾 Save File Compatibility:
-            - **100% Byte-for-Byte Compatible**: Drop your existing Pokémon Emerald Legacy `.sav` save file straight in!
+            - **100% Byte-for-Byte Compatible**: Drop your existing Pokémon Emerald Legacy `.sav` / `.dsv` save file straight in!
 
-            #### 🕹️ How to Patch:
-            1. Download `Micos_Emerald_Legacy.bps` below.
+            #### 🕹️ Quick Patching Instructions:
+            1. Download **`Micos_Emerald_Legacy.bps`** below.
             2. Open [Marc Robledo's ROM Patcher JS](https://marcrobledo.com/RomPatcher.js/).
-            3. Apply `Micos_Emerald_Legacy.bps` to your clean **Pokémon Emerald (USA, Europe)** ROM.
+            3. Apply the patch to your clean **Pokémon Emerald (USA, Europe)** ROM.
+
+            ---
+            👉 **Full Feature Documentation**: Check out the [**Project README**](https://github.com/Mickosis/Mico_Emerald_Legacy#readme) for the full feature showcase, guides, and documentation!
           files: |
             Micos_Emerald_Legacy.bps
         env:

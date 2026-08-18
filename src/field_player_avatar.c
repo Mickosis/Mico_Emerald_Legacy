@@ -1904,7 +1904,7 @@ static bool8 Fishing_MonOnHook(struct Task *task)
     gFieldEffectArguments[2] = gObjectEvents[gPlayerAvatar.objectEventId].previousElevation;
     gFieldEffectArguments[3] = 1;
     FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
-    PlaySE(SE_M_SPLASH);
+    PlaySE(SE_M_DIVE);
 
     AlignFishingAnimationFrames();
     FillWindowPixelBuffer(0, PIXEL_FILL(1));
@@ -1934,7 +1934,7 @@ static bool8 Fishing_StartEncounter(struct Task *task)
             gFieldEffectArguments[2] = playerObjEvent->previousElevation;
             gFieldEffectArguments[3] = 1;
             FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
-            PlaySE(SE_M_SPLASH);
+            PlaySE(SE_M_DIVE);
 
             ObjectEventSetGraphicsId(playerObjEvent, task->tPlayerGfxId);
             ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);

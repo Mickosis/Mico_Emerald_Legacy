@@ -1,6 +1,6 @@
 # 🤖 Agent Instructions & Repository Guidelines
 
-Welcome to **Mico's Pokémon Emerald Legacy**. This document serves as the permanent system instructions for all AI coding agents (and human developers) contributing to this codebase.
+Welcome to **Pokémon Modern Emerald**. This document serves as the permanent system instructions for all AI coding agents (and human developers) contributing to this codebase.
 
 ---
 
@@ -21,7 +21,7 @@ Welcome to **Mico's Pokémon Emerald Legacy**. This document serves as the perma
 4. **Automated CI/CD & Release Protocol**:
    - Building the ROM and updating GitHub Releases is 100% automated via GitHub Actions (`.github/workflows/build_and_release.yml`).
    - Every release automatically includes:
-     1. The compiled patch file: **`Micos_Emerald_Legacy.bps`** (100% clean, legal distribution)
+     1. The compiled patch file: **`Modern_Emerald.bps`** (100% clean, legal distribution)
      2. An automated commit changelog, quick patching instructions, and link to `README.md`.
    - The compiled ROM (**`pokeemerald.gba`**) is stored as a private GitHub Actions workflow artifact.
 
@@ -74,7 +74,7 @@ make -f make_tools.mk -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 
 # Generate local test BPS patch against clean Emerald base (ask user for preferred destination directory)
-python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba <preferred_path>/Micos_Emerald_Legacy_Test.bps
+python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba <preferred_path>/Modern_Emerald_Test.bps
 
 # Check Git status & diffs
 git status

@@ -71,7 +71,7 @@ jobs:
         run: |
           make -f make_tools.mk -j$(nproc)
 
-      - name: Compile Mico's Emerald Legacy ROM
+      - name: Compile Modern Emerald ROM
         run: |
           make -j$(nproc)
 
@@ -91,7 +91,7 @@ jobs:
 
       - name: Generate BPS Patch File
         run: |
-          python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Micos_Emerald_Legacy.bps
+          python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Modern_Emerald.bps
 
       - name: Determine Version Tag
         id: versioning
@@ -148,31 +148,31 @@ jobs:
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Micos-Emerald-Legacy-Build-${{ steps.versioning.outputs.next_tag }}
+          name: Modern-Emerald-Build-${{ steps.versioning.outputs.next_tag }}
           path: |
             pokeemerald.gba
-            Micos_Emerald_Legacy.bps
+            Modern_Emerald.bps
 
       - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.versioning.outputs.next_tag }}
-          name: "Mico's Emerald Legacy ${{ steps.versioning.outputs.next_tag }}"
+          name: "Modern Emerald ${{ steps.versioning.outputs.next_tag }}"
           body: |
-            ### 🎮 Mico's Pokémon Emerald Legacy ${{ steps.versioning.outputs.next_tag }}
+            ### 🎮 Pokémon Modern Emerald ${{ steps.versioning.outputs.next_tag }}
 
             #### 📝 What's Changed in this Release:
             ${{ steps.changelog.outputs.changes }}
 
             #### 🕹️ Quick Patching Instructions:
-            1. Download **`Micos_Emerald_Legacy.bps`** below.
+            1. Download **`Modern_Emerald.bps`** below.
             2. Open [Marc Robledo's ROM Patcher JS](https://marcrobledo.com/RomPatcher.js/).
             3. Apply the patch to your clean **Pokémon Emerald (USA, Europe)** ROM.
 
             ---
-            👉 **Full Feature Documentation**: Check out the [**Project README**](https://github.com/Mickosis/Mico_Emerald_Legacy#readme) for complete mechanics and guides!
+            👉 **Full Feature Documentation**: Check out the [**Project README**](https://github.com/Mickosis/Modern_Emerald#readme) for complete mechanics and guides!
           files: |
-            Micos_Emerald_Legacy.bps
+            Modern_Emerald.bps
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

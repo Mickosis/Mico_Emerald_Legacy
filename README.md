@@ -1,10 +1,10 @@
-# 🌟 Mico's Pokémon Emerald Legacy
+# 🌟 Pokémon Modern Emerald
 
-[![Build & Release](https://github.com/Mickosis/Mico_Emerald_Legacy/actions/workflows/build_and_release.yml/badge.svg)](https://github.com/Mickosis/Mico_Emerald_Legacy/actions)
-[![Release](https://img.shields.io/github/v/release/Mickosis/Mico_Emerald_Legacy?style=for-the-badge&logo=github)](https://github.com/Mickosis/Mico_Emerald_Legacy/releases/latest)
+[![Build & Release](https://github.com/Mickosis/Modern_Emerald/actions/workflows/build_and_release.yml/badge.svg)](https://github.com/Mickosis/Modern_Emerald/actions)
+[![Release](https://img.shields.io/github/v/release/Mickosis/Modern_Emerald?style=for-the-badge&logo=github)](https://github.com/Mickosis/Modern_Emerald/releases/latest)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-**Mico's Pokémon Emerald Legacy** is an enhanced edition of *Pokémon Emerald* built on top of [Pokémon Emerald Legacy](https://github.com/cRz-Shadows/Pokemon_Emerald_Legacy). It delivers a modern, vibrant Hoenn adventure with essential **Quality of Life upgrades**, **Follower Pokémon**, **Custom Surfing Sprites**, and **Overworld Wild Encounters**—while strictly preserving 100% authentic Generation 3 battle mechanics, Pokémon stats, learnsets, and game balance.
+**Pokémon Modern Emerald** is an enhanced edition of *Pokémon Emerald*. It delivers a modern, vibrant Hoenn adventure with essential **Quality of Life upgrades**, **Follower Pokémon**, **Custom Surfing Sprites**, and **Overworld Wild Encounters**—while strictly preserving 100% authentic Generation 3 battle mechanics, Pokémon stats, learnsets, and game balance.
 
 ---
 
@@ -37,10 +37,10 @@ Wild Pokémon visibly roam across the tall grass, caves, and waters of Hoenn!
 
 ## 🕹️ Download & How to Patch
 
-1. Download the latest **`Micos_Emerald_Legacy.bps`** patch from the [Releases Page](https://github.com/Mickosis/Mico_Emerald_Legacy/releases/latest).
+1. Download the latest **`Modern_Emerald.bps`** patch from the [Releases Page](https://github.com/Mickosis/Modern_Emerald/releases/latest).
 2. Open [Marc Robledo's ROM Patcher JS](https://marcrobledo.com/RomPatcher.js/).
 3. Select your clean **Pokémon Emerald (USA, Europe)** ROM as the Source.
-4. Select **`Micos_Emerald_Legacy.bps`** as the Patch file.
+4. Select **`Modern_Emerald.bps`** as the Patch file.
 5. Click **Apply patch** to generate your `.gba` file!
 
 ---
@@ -49,15 +49,15 @@ Wild Pokémon visibly roam across the tall grass, caves, and waters of Hoenn!
 
 ```bash
 # Clone the repository
-git clone https://github.com/Mickosis/Mico_Emerald_Legacy.git
-cd Mico_Emerald_Legacy
+git clone https://github.com/Mickosis/Modern_Emerald.git
+cd Modern_Emerald
 
 # Compile tools & ROM (Linux / macOS)
 make -f make_tools.mk -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 
 # Generate .bps patch
-python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Micos_Emerald_Legacy.bps
+python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Modern_Emerald.bps
 ```
 
 ---

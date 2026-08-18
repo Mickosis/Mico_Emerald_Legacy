@@ -8030,8 +8030,14 @@ bool8 MovementAction_EmoteExclamationMark_Step0(struct ObjectEvent *objectEvent,
 {
     ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
     FieldEffectStart(FLDEFF_EXCLAMATION_MARK_ICON);
+    SetMovementDelay(sprite, 24);
     sprite->sActionFuncId = 1;
-    return TRUE;
+    return FALSE;
+}
+
+bool8 MovementAction_EmoteExclamationMark_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return WaitForMovementDelay(sprite);
 }
 
 bool8 MovementAction_EmoteQuestionMark_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -8039,16 +8045,28 @@ bool8 MovementAction_EmoteQuestionMark_Step0(struct ObjectEvent *objectEvent, st
     ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
     gFieldEffectArguments[7] = -1;
     FieldEffectStart(FLDEFF_QUESTION_MARK_ICON);
+    SetMovementDelay(sprite, 24);
     sprite->sActionFuncId = 1;
-    return TRUE;
+    return FALSE;
+}
+
+bool8 MovementAction_EmoteQuestionMark_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return WaitForMovementDelay(sprite);
 }
 
 bool8 MovementAction_EmoteHeart_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
 {
     ObjectEventGetLocalIdAndMap(objectEvent, &gFieldEffectArguments[0], &gFieldEffectArguments[1], &gFieldEffectArguments[2]);
     FieldEffectStart(FLDEFF_HEART_ICON);
+    SetMovementDelay(sprite, 24);
     sprite->sActionFuncId = 1;
-    return TRUE;
+    return FALSE;
+}
+
+bool8 MovementAction_EmoteHeart_Step1(struct ObjectEvent *objectEvent, struct Sprite *sprite)
+{
+    return WaitForMovementDelay(sprite);
 }
 
 bool8 MovementAction_RevealTrainer_Step0(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -10902,7 +10920,7 @@ u8 MovementType_OverworldWildEncounter_Common_Step7(struct ObjectEvent *objectEv
     ClearObjectEventMovement(objectEvent, sprite);
     SetSavedOWEMovementState(objectEvent);
     sprite->sTypeFuncId = 8;
-    return TRUE;
+    return FALSE;
 }
 
 u8 MovementType_OverworldWildEncounter_ChasePlayer_Step8(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -10912,13 +10930,13 @@ u8 MovementType_OverworldWildEncounter_ChasePlayer_Step8(struct ObjectEvent *obj
     if (IsOWENextToPlayer(objectEvent))
     {
         sprite->sTypeFuncId = 10;
-        return TRUE;
+        return FALSE;
     }
 
     ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_EMOTE_EXCLAMATION_MARK);
     PlaySE(SE_PIN);
     sprite->sTypeFuncId = 9;
-    return TRUE;
+    return FALSE;
 }
 
 u8 MovementType_OverworldWildEncounter_Common_Step9(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -10926,7 +10944,7 @@ u8 MovementType_OverworldWildEncounter_Common_Step9(struct ObjectEvent *objectEv
     if (ObjectEventExecSingleMovementAction(objectEvent, sprite))
         sprite->sTypeFuncId = 10;
     
-    return TRUE;
+    return FALSE;
 }
 
 u8 MovementType_OverworldWildEncounter_ChasePlayer_Step10(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -10934,7 +10952,7 @@ u8 MovementType_OverworldWildEncounter_ChasePlayer_Step10(struct ObjectEvent *ob
     u8 direction = DetermineObjectEventDirectionFromObject(&gObjectEvents[gPlayerAvatar.objectEventId], objectEvent);
     SetObjectEventDirection(objectEvent, direction);
     sprite->sTypeFuncId = 11;
-    return TRUE;
+    return FALSE;
 }
 
 u8 MovementType_OverworldWildEncounter_ChasePlayer_Step11(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -11009,7 +11027,7 @@ u8 MovementType_OverworldWildEncounter_FleePlayer_Step8(struct ObjectEvent *obje
     ObjectEventSetSingleMovement(objectEvent, sprite, MOVEMENT_ACTION_EMOTE_EXCLAMATION_MARK);
     PlaySE(SE_PIN);
     sprite->sTypeFuncId = 9;
-    return TRUE;
+    return FALSE;
 }
 
 #define sCollisionTimer     sprite->data[6]
@@ -11027,7 +11045,7 @@ u8 MovementType_OverworldWildEncounter_FleePlayer_Step10(struct ObjectEvent *obj
     direction = GetOppositeDirection(DetermineObjectEventDirectionFromObject(&gObjectEvents[gPlayerAvatar.objectEventId], objectEvent));
     SetObjectEventDirection(objectEvent, direction);
     sprite->sTypeFuncId = 11;
-    return TRUE;
+    return FALSE;
 }
 
 u8 MovementType_OverworldWildEncounter_FleePlayer_Step11(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -11207,7 +11225,7 @@ u8 MovementType_OverworldWildEncounter_Despawn_Step8(struct ObjectEvent *objectE
     PlaySE(SE_PIN);
     sDespawnTimer = 0;
     sprite->sTypeFuncId = 9;
-    return TRUE;
+    return FALSE;
 }
 
 u8 MovementType_OverworldWildEncounter_Despawn_Step10(struct ObjectEvent *objectEvent, struct Sprite *sprite)
@@ -11215,7 +11233,7 @@ u8 MovementType_OverworldWildEncounter_Despawn_Step10(struct ObjectEvent *object
     u8 direction = DetermineObjectEventDirectionFromObject(&gObjectEvents[gPlayerAvatar.objectEventId], objectEvent);
     SetObjectEventDirection(objectEvent, direction);
     sprite->sTypeFuncId = 11;
-    return TRUE;
+    return FALSE;
 }
 
 u8 MovementType_OverworldWildEncounter_Despawn_Step11(struct ObjectEvent *objectEvent, struct Sprite *sprite)

@@ -1898,8 +1898,9 @@ static bool8 Fishing_CheckMoreDots(struct Task *task)
 
 static bool8 Fishing_MonOnHook(struct Task *task)
 {
-    s16 x = gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.x;
-    s16 y = gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.y;
+    struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
+    s16 x = playerObjEvent->currentCoords.x;
+    s16 y = playerObjEvent->currentCoords.y;
     MoveCoords(GetPlayerFacingDirection(), &x, &y);
 
     if (!TrySpawnFishingOWE(task->tFishingRod, x, y))
@@ -1907,13 +1908,19 @@ static bool8 Fishing_MonOnHook(struct Task *task)
         GenerateFishingWildMonEncounter(task->tFishingRod);
         gFieldEffectArguments[0] = x;
         gFieldEffectArguments[1] = y;
-        gFieldEffectArguments[2] = gObjectEvents[gPlayerAvatar.objectEventId].previousElevation;
+        gFieldEffectArguments[2] = playerObjEvent->previousElevation;
         gFieldEffectArguments[3] = 1;
         FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
         PlaySE(SE_M_DIVE);
     }
 
-    AlignFishingAnimationFrames();
+    ObjectEventSetGraphicsId(playerObjEvent, task->tPlayerGfxId);
+    ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);
+    if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
+        SetSurfBlob_PlayerOffset(playerObjEvent->fieldEffectSpriteId, FALSE, 0);
+    gSprites[gPlayerAvatar.spriteId].x2 = 0;
+    gSprites[gPlayerAvatar.spriteId].y2 = 0;
+
     FillWindowPixelBuffer(0, PIXEL_FILL(1));
     AddTextPrinterParameterized2(0, FONT_NORMAL, gText_PokemonOnHook, 1, 0, TEXT_COLOR_DARK_GRAY, TEXT_COLOR_WHITE, TEXT_COLOR_LIGHT_GRAY);
     task->tStep++;
@@ -1923,23 +1930,12 @@ static bool8 Fishing_MonOnHook(struct Task *task)
 
 static bool8 Fishing_StartEncounter(struct Task *task)
 {
-    if (task->tFrameCounter == 0)
-        AlignFishingAnimationFrames();
-
     RunTextPrinters();
 
     if (task->tFrameCounter == 0)
     {
         if (!IsTextPrinterActive(0))
         {
-            struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-
-            ObjectEventSetGraphicsId(playerObjEvent, task->tPlayerGfxId);
-            ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);
-            if (gPlayerAvatar.flags & PLAYER_AVATAR_FLAG_SURFING)
-                SetSurfBlob_PlayerOffset(gObjectEvents[gPlayerAvatar.objectEventId].fieldEffectSpriteId, FALSE, 0);
-            gSprites[gPlayerAvatar.spriteId].x2 = 0;
-            gSprites[gPlayerAvatar.spriteId].y2 = 0;
             ClearDialogWindowAndFrame(0, TRUE);
             task->tFrameCounter++;
             return FALSE;

@@ -2089,7 +2089,7 @@ bool32 TrySpawnFishingOWE(u8 rod, s16 x, s16 y)
     objectEventTemplate.x = x - MAP_OFFSET;
     objectEventTemplate.y = y - MAP_OFFSET;
     objectEventTemplate.elevation = MapGridGetElevationAt(x, y);
-    objectEventTemplate.movementType = MOVEMENT_TYPE_LOOK_AROUND;
+    objectEventTemplate.movementType = MOVEMENT_TYPE_NONE;
     objectEventTemplate.trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER;
 
     objectEventId = GetObjectEventIdByLocalId(objectEventTemplate.localId);
@@ -2149,7 +2149,7 @@ bool32 TrySpawnRockSmashOWE(s16 x, s16 y)
     objectEventTemplate.x = x - MAP_OFFSET;
     objectEventTemplate.y = y - MAP_OFFSET;
     objectEventTemplate.elevation = MapGridGetElevationAt(x, y);
-    objectEventTemplate.movementType = MOVEMENT_TYPE_LOOK_AROUND;
+    objectEventTemplate.movementType = MOVEMENT_TYPE_NONE;
     objectEventTemplate.trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER;
 
     objectEventId = GetObjectEventIdByLocalId(objectEventTemplate.localId);

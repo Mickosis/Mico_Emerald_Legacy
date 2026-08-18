@@ -48,7 +48,7 @@
 #define OW_AMBIENT_CRIES_OWE_PRIORITY   1
 #define OW_AMBIENT_CRIES_OWE_ONLY       2
 #define OW_AMBIENT_CRIES_NONE           3
-#define OW_AMBIENT_CRIES                OW_AMBIENT_CRIES_VANILLA
+#define OW_AMBIENT_CRIES                OW_AMBIENT_CRIES_OWE_PRIORITY
 // OW_MON_WANDER_WALK: play walking animation while OWE wanders in place
 #define OW_MON_WANDER_WALK FALSE
 #define IS_POW_OF_TWO(n) (((n) & ((n)-1)) == 0)

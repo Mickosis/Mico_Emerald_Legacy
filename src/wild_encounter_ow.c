@@ -86,7 +86,7 @@
 #define GetFollowerNPCObjectId() 0
 
 static const u8 sStandardDirections[4] = {DIR_SOUTH, DIR_NORTH, DIR_WEST, DIR_EAST};
-static EWRAM_DATA u32 sBattleOWEObjectEventId = 0;
+static EWRAM_DATA u32 sBattleOWEObjectEventId = OBJECT_EVENTS_COUNT;
 
 #define GetObjectEventIdByLocalId(localId) GetObjectEventIdByLocalIdAndMap((localId), gSaveBlock1Ptr->location.mapNum, gSaveBlock1Ptr->location.mapGroup)
 

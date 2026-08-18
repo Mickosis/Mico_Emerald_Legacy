@@ -1,6 +1,14 @@
 #ifndef GUARD_WILD_ENCOUNTER_OW_H
 #define GUARD_WILD_ENCOUNTER_OW_H
 
+#include "constants/event_object_movement.h"
+
+struct ObjectEvent;
+struct Sprite;
+struct SpritePalette;
+struct ObjectEventTemplate;
+struct ScriptContext;
+
 #define OWE_SPAWNS_MAX                  4
 #define OWE_APPROACH_DISTANCE           2
 #define OWE_APPROACH_JUMP_TIMER_MIN     16

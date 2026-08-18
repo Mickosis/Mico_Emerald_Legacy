@@ -559,51 +559,44 @@ static inline u16 SanitizeSpeciesId(u16 species)
 
 static inline u32 OWE_GetMovementTypeFromSpecies(u16 speciesId)
 {
-    speciesId = SanitizeSpeciesId(speciesId);
-    enum OverworldWildEncounterBehaviors behavior = gSpeciesInfo[speciesId].overworldEncounterBehavior;
-    return gOWESpeciesBehavior[behavior].movementType;
+    u16 sanitized = SanitizeSpeciesId(speciesId);
+    return gOWESpeciesBehavior[gSpeciesInfo[sanitized].overworldEncounterBehavior].movementType;
 }
 
 static inline u32 OWE_GetViewDistanceFromSpecies(u16 speciesId)
 {
-    speciesId = SanitizeSpeciesId(speciesId);
-    enum OverworldWildEncounterBehaviors behavior = gSpeciesInfo[speciesId].overworldEncounterBehavior;
-    return gOWESpeciesBehavior[behavior].viewDistance;
+    u16 sanitized = SanitizeSpeciesId(speciesId);
+    return gOWESpeciesBehavior[gSpeciesInfo[sanitized].overworldEncounterBehavior].viewDistance;
 }
 
 static inline u32 OWE_GetViewWidthFromSpecies(u16 speciesId)
 {
-    speciesId = SanitizeSpeciesId(speciesId);
-    enum OverworldWildEncounterBehaviors behavior = gSpeciesInfo[speciesId].overworldEncounterBehavior;
-    return gOWESpeciesBehavior[behavior].viewWidth;
+    u16 sanitized = SanitizeSpeciesId(speciesId);
+    return gOWESpeciesBehavior[gSpeciesInfo[sanitized].overworldEncounterBehavior].viewWidth;
 }
 
 static inline u32 OWE_GetViewActiveDistanceFromSpecies(u16 speciesId)
 {
-    speciesId = SanitizeSpeciesId(speciesId);
-    enum OverworldWildEncounterBehaviors behavior = gSpeciesInfo[speciesId].overworldEncounterBehavior;
-    return gOWESpeciesBehavior[behavior].activeDistance;
+    u16 sanitized = SanitizeSpeciesId(speciesId);
+    return gOWESpeciesBehavior[gSpeciesInfo[sanitized].overworldEncounterBehavior].activeDistance;
 }
 
 static inline enum SpeedOWE OWE_GetIdleSpeedFromSpecies(u16 speciesId)
 {
-    speciesId = SanitizeSpeciesId(speciesId);
-    enum OverworldWildEncounterBehaviors behavior = gSpeciesInfo[speciesId].overworldEncounterBehavior;
-    return gOWESpeciesBehavior[behavior].idleSpeed;
+    u16 sanitized = SanitizeSpeciesId(speciesId);
+    return gOWESpeciesBehavior[gSpeciesInfo[sanitized].overworldEncounterBehavior].idleSpeed;
 }
 
 static inline enum SpeedOWE OWE_GetActiveSpeedFromSpecies(u16 speciesId)
 {
-    speciesId = SanitizeSpeciesId(speciesId);
-    enum OverworldWildEncounterBehaviors behavior = gSpeciesInfo[speciesId].overworldEncounterBehavior;
-    return gOWESpeciesBehavior[behavior].activeSpeed;
+    u16 sanitized = SanitizeSpeciesId(speciesId);
+    return gOWESpeciesBehavior[gSpeciesInfo[sanitized].overworldEncounterBehavior].activeSpeed;
 }
 
 static inline enum ReturnToIdleOWE OWE_GetReturnToIdleFromSpecies(u16 speciesId)
 {
-    speciesId = SanitizeSpeciesId(speciesId);
-    enum OverworldWildEncounterBehaviors behavior = gSpeciesInfo[speciesId].overworldEncounterBehavior;
-    return gOWESpeciesBehavior[behavior].returnToIdle;
+    u16 sanitized = SanitizeSpeciesId(speciesId);
+    return gOWESpeciesBehavior[gSpeciesInfo[sanitized].overworldEncounterBehavior].returnToIdle;
 }
 
 #endif // GUARD_POKEMON_H

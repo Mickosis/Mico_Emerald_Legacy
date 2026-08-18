@@ -1,5 +1,6 @@
 #include "global.h"
 #include "wild_encounter.h"
+#include "wild_encounter_ow.h"
 #include "pokemon.h"
 #include "metatile_behavior.h"
 #include "fieldmap.h"
@@ -878,6 +879,9 @@ void RockSmashWildEncounter(void)
         else if (WildEncounterCheck(wildPokemonInfo->encounterRate, TRUE) == TRUE
          && TryGenerateWildMon(wildPokemonInfo, WILD_AREA_ROCKS, WILD_CHECK_REPEL | WILD_CHECK_KEEN_EYE) == TRUE)
         {
+            s16 x, y;
+            GetXYCoordsOneStepInFrontOfPlayer(&x, &y);
+            TrySpawnRockSmashOWE(x, y);
             BattleSetup_StartWildBattle();
             gSpecialVar_Result = TRUE;
         }
@@ -975,7 +979,7 @@ bool8 DoesCurrentMapHaveFishingMons(void)
         return FALSE;
 }
 
-void FishingWildEncounter(u8 rod)
+u16 GenerateFishingWildMonEncounter(u8 rod)
 {
     u16 species;
 
@@ -992,6 +996,12 @@ void FishingWildEncounter(u8 rod)
     }
     IncrementGameStat(GAME_STAT_FISHING_ENCOUNTERS);
     SetPokemonAnglerSpecies(species);
+    return species;
+}
+
+void FishingWildEncounter(u8 rod)
+{
+    GenerateFishingWildMonEncounter(rod);
     BattleSetup_StartWildBattle();
 }
 

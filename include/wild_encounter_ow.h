@@ -127,6 +127,8 @@ u32 RemoveOldestGeneratedOWE(void);
 void StartWildBattleWithOWE(struct ScriptContext *ctx);
 void OWEApproachForBattle(struct ScriptContext *ctx);
 void SetOverworldObjectSpecies(struct ScriptContext *ctx);
+bool32 TrySpawnFishingOWE(u8 rod, s16 x, s16 y);
+bool32 TrySpawnRockSmashOWE(s16 x, s16 y);
 
 extern const u8 gOWESpeciesBehaviorMap[];
 extern const u8 InteractWithOverworldWildEncounter[];

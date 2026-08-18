@@ -2023,6 +2023,124 @@ static bool32 CheckValidOWESpecies(u16 speciesId)
     return TRUE;
 }
 
+bool32 TrySpawnFishingOWE(u8 rod, s16 x, s16 y)
+{
+    u16 species;
+    u8 level;
+    bool32 isShiny;
+    bool32 isFemale;
+    struct ObjectEventTemplate objectEventTemplate;
+    u8 objectEventId;
+    struct ObjectEvent *owe;
+    u8 dummyId;
+
+    if (!WE_OW_ENCOUNTERS)
+        return FALSE;
+
+    species = GenerateFishingWildMonEncounter(rod);
+    if (species == SPECIES_NONE)
+        return FALSE;
+
+    level = GetMonData(&gEnemyParty[0], MON_DATA_LEVEL);
+    isShiny = IsMonShiny(&gEnemyParty[0]);
+    isFemale = (GetMonGender(&gEnemyParty[0]) == MON_FEMALE);
+
+    if (!CheckValidOWESpecies(species))
+        return FALSE;
+
+    TryAndDespawnOldestGeneratedOWE_ToFreeObject(&dummyId);
+
+    if (!CheckCanLoadOWE(species, isFemale, isShiny, x, y))
+        return FALSE;
+
+    memset(&objectEventTemplate, 0, sizeof(objectEventTemplate));
+    objectEventTemplate.localId = LOCALID_OW_ENCOUNTER_END;
+    objectEventTemplate.graphicsId = OBJ_EVENT_GFX_MON_BASE + species;
+    objectEventTemplate.x = x - MAP_OFFSET;
+    objectEventTemplate.y = y - MAP_OFFSET;
+    objectEventTemplate.elevation = MapGridGetElevationAt(x, y);
+    objectEventTemplate.movementType = MOVEMENT_TYPE_LOOK_AROUND;
+    objectEventTemplate.trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER;
+
+    objectEventId = GetObjectEventIdByLocalId(objectEventTemplate.localId);
+    if (objectEventId < OBJECT_EVENTS_COUNT)
+        RemoveObjectEvent(&gObjectEvents[objectEventId]);
+
+    objectEventId = SpawnSpecialObjectEvent(&objectEventTemplate);
+    if (objectEventId >= OBJECT_EVENTS_COUNT)
+        return FALSE;
+
+    owe = &gObjectEvents[objectEventId];
+    owe->disableCoveringGroundEffects = TRUE;
+    owe->shiny = isShiny;
+    owe->sOverworldEncounterLevel = level;
+    owe->sOverworldEncounterCategory = OWE_CATEGORY_WILD;
+
+    ObjectEventTurn(owe, GetOppositeDirection(GetPlayerFacingDirection()));
+    sBattleOWEObjectEventId = objectEventId;
+
+    return TRUE;
+}
+
+bool32 TrySpawnRockSmashOWE(s16 x, s16 y)
+{
+    u16 species;
+    u8 level;
+    bool32 isShiny;
+    bool32 isFemale;
+    struct ObjectEventTemplate objectEventTemplate;
+    u8 objectEventId;
+    struct ObjectEvent *owe;
+    u8 dummyId;
+
+    if (!WE_OW_ENCOUNTERS)
+        return FALSE;
+
+    species = GetMonData(&gEnemyParty[0], MON_DATA_SPECIES);
+    if (species == SPECIES_NONE)
+        return FALSE;
+
+    level = GetMonData(&gEnemyParty[0], MON_DATA_LEVEL);
+    isShiny = IsMonShiny(&gEnemyParty[0]);
+    isFemale = (GetMonGender(&gEnemyParty[0]) == MON_FEMALE);
+
+    if (!CheckValidOWESpecies(species))
+        return FALSE;
+
+    TryAndDespawnOldestGeneratedOWE_ToFreeObject(&dummyId);
+
+    if (!CheckCanLoadOWE(species, isFemale, isShiny, x, y))
+        return FALSE;
+
+    memset(&objectEventTemplate, 0, sizeof(objectEventTemplate));
+    objectEventTemplate.localId = LOCALID_OW_ENCOUNTER_END;
+    objectEventTemplate.graphicsId = OBJ_EVENT_GFX_MON_BASE + species;
+    objectEventTemplate.x = x - MAP_OFFSET;
+    objectEventTemplate.y = y - MAP_OFFSET;
+    objectEventTemplate.elevation = MapGridGetElevationAt(x, y);
+    objectEventTemplate.movementType = MOVEMENT_TYPE_LOOK_AROUND;
+    objectEventTemplate.trainerType = TRAINER_TYPE_OW_WILD_ENCOUNTER;
+
+    objectEventId = GetObjectEventIdByLocalId(objectEventTemplate.localId);
+    if (objectEventId < OBJECT_EVENTS_COUNT)
+        RemoveObjectEvent(&gObjectEvents[objectEventId]);
+
+    objectEventId = SpawnSpecialObjectEvent(&objectEventTemplate);
+    if (objectEventId >= OBJECT_EVENTS_COUNT)
+        return FALSE;
+
+    owe = &gObjectEvents[objectEventId];
+    owe->disableCoveringGroundEffects = TRUE;
+    owe->shiny = isShiny;
+    owe->sOverworldEncounterLevel = level;
+    owe->sOverworldEncounterCategory = OWE_CATEGORY_WILD;
+
+    ObjectEventTurn(owe, GetOppositeDirection(GetPlayerFacingDirection()));
+    sBattleOWEObjectEventId = objectEventId;
+
+    return TRUE;
+}
+
 #undef sOverworldEncounterLevel
 #undef sOverworldEncounterAge
 #undef sOverworldEncounterCategory

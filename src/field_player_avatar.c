@@ -22,6 +22,8 @@
 #include "task.h"
 #include "tv.h"
 #include "wild_encounter.h"
+#include "wild_encounter_ow.h"
+#include "battle_setup.h"
 #include "constants/abilities.h"
 #include "constants/event_objects.h"
 #include "constants/event_object_movement.h"
@@ -1899,12 +1901,17 @@ static bool8 Fishing_MonOnHook(struct Task *task)
     s16 x = gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.x;
     s16 y = gObjectEvents[gPlayerAvatar.objectEventId].currentCoords.y;
     MoveCoords(GetPlayerFacingDirection(), &x, &y);
-    gFieldEffectArguments[0] = x;
-    gFieldEffectArguments[1] = y;
-    gFieldEffectArguments[2] = gObjectEvents[gPlayerAvatar.objectEventId].previousElevation;
-    gFieldEffectArguments[3] = 1;
-    FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
-    PlaySE(SE_M_DIVE);
+
+    if (!TrySpawnFishingOWE(task->tFishingRod, x, y))
+    {
+        GenerateFishingWildMonEncounter(task->tFishingRod);
+        gFieldEffectArguments[0] = x;
+        gFieldEffectArguments[1] = y;
+        gFieldEffectArguments[2] = gObjectEvents[gPlayerAvatar.objectEventId].previousElevation;
+        gFieldEffectArguments[3] = 1;
+        FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
+        PlaySE(SE_M_DIVE);
+    }
 
     AlignFishingAnimationFrames();
     FillWindowPixelBuffer(0, PIXEL_FILL(1));
@@ -1926,15 +1933,6 @@ static bool8 Fishing_StartEncounter(struct Task *task)
         if (!IsTextPrinterActive(0))
         {
             struct ObjectEvent *playerObjEvent = &gObjectEvents[gPlayerAvatar.objectEventId];
-            s16 x = playerObjEvent->currentCoords.x;
-            s16 y = playerObjEvent->currentCoords.y;
-            MoveCoords(GetPlayerFacingDirection(), &x, &y);
-            gFieldEffectArguments[0] = x;
-            gFieldEffectArguments[1] = y;
-            gFieldEffectArguments[2] = playerObjEvent->previousElevation;
-            gFieldEffectArguments[3] = 1;
-            FieldEffectStart(FLDEFF_JUMP_BIG_SPLASH);
-            PlaySE(SE_M_DIVE);
 
             ObjectEventSetGraphicsId(playerObjEvent, task->tPlayerGfxId);
             ObjectEventTurn(playerObjEvent, playerObjEvent->movementDirection);
@@ -1952,7 +1950,7 @@ static bool8 Fishing_StartEncounter(struct Task *task)
     {
         gPlayerAvatar.preventStep = FALSE;
         UnlockPlayerFieldControls();
-        FishingWildEncounter(task->tFishingRod);
+        BattleSetup_StartWildBattle();
         RecordFishingAttemptForTV(TRUE);
         DestroyTask(FindTaskIdByFunc(Task_Fishing));
     }

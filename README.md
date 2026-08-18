@@ -25,6 +25,7 @@ Wild Pokémon physically appear and roam throughout tall grass, caves, water rou
 - **🛡️ Repel Ward & Collision Bypass**: Using a Repel cleans lower-level Pokémon off your screen, and you can sprint or bike through lower-level wild Pokémon without triggering collision battles.
 - **🏛️ Dungeon & Facility Spawns**: Overworld encounters are fully active in the **Battle Pyramid**, **Battle Pike**, and **Safari Zone** (with genuine Safari battle mechanics).
 - **🐟 Secret Feebas Tile Detection**: Wild Feebas appears visibly swimming on the 6 special Route 119 fishing tiles and stays persistent once discovered.
+- **🎣 Fishing & 🪨 Rock Smash Pop-Outs**: Reeling in a hooked Pokémon or smashing an encounter rock visibly spawns the wild Pokémon on the field with its authentic cry and water splash / impact dust animation before transitioning into battle.
 - **❤️ Party Lead Ability Reactions**: 
   - **Cute Charm**: Wild Pokémon react with a **Heart ❤️ emote** and walk towards your lead.
   - **Intimidate**: Lower-level wild Pokémon get startled, hesitate, and **flee** from your lead.

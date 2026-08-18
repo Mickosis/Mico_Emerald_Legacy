@@ -48,10 +48,10 @@
 #define OWE_SPAWN_WIDTH_RADIUS          ((OWE_SPAWN_WIDTH_TOTAL - 1) / 2)     // Distance from center to left/right edge (not including center).
 #define OWE_SPAWN_HEIGHT_RADIUS         ((OWE_SPAWN_HEIGHT_TOTAL - 1) / 2)    // Distance from center to top/bottom edge (not including center).
 
-#define OWE_SPAWN_TIME_REPLACEMENT      240 // The number of frames before an existing spawn will be replaced with a new one (requires WE_OWE_SPAWN_REPLACEMENT).
+#define OWE_SPAWN_TIME_REPLACEMENT      90  // The number of frames before an existing spawn will be replaced with a new one (requires WE_OWE_SPAWN_REPLACEMENT).
 #define OWE_SPAWN_TIME_LURE             0
-#define OWE_SPAWN_TIME_MINIMUM          30  // The minimum value the spawn wait time can be reset to. Prevents spawn attempts every frame.
-#define OWE_SPAWN_TIME_PER_ACTIVE       30  // The number of frames that will be added to the countdown per currently active spawn.
+#define OWE_SPAWN_TIME_MINIMUM          10  // The minimum value the spawn wait time can be reset to. Prevents spawn attempts every frame.
+#define OWE_SPAWN_TIME_PER_ACTIVE       15  // The number of frames that will be added to the countdown per currently active spawn.
 
 #define OWE_DEFAULT_CHASE_RANGE         5
 #define OWE_RESTORED_MOVEMENT_FUNC_ID   10
@@ -1313,11 +1313,23 @@ bool32 TryAndDespawnOldestGeneratedOWE_ToFreeObject(u8 *objectEventId)
 void DespawnOWEOnBattleStart(void)
 {
     struct ObjectEvent *owe;
+    u8 localId = gSpecialVar_LastTalked;
 
-    if (gSpecialVar_LastTalked == 0)
+    if (sBattleOWEObjectEventId < OBJECT_EVENTS_COUNT)
+    {
+        owe = &gObjectEvents[sBattleOWEObjectEventId];
+        if (IsOverworldWildEncounter(owe, OWE_ANY))
+            RemoveObjectEvent(owe);
+        sBattleOWEObjectEventId = OBJECT_EVENTS_COUNT;
+        SetNewOWESpawnCountdown();
+        gSpecialVar_LastTalked = 0;
+        return;
+    }
+
+    if (localId == 0)
         return;
 
-    owe = &gObjectEvents[GetObjectEventIdByLocalId(gSpecialVar_LastTalked)];
+    owe = &gObjectEvents[GetObjectEventIdByLocalId(localId)];
     if (!IsOverworldWildEncounter(owe, OWE_ANY))
         return;
 

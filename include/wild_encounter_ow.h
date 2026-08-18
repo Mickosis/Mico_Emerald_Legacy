@@ -128,6 +128,7 @@ void StartWildBattleWithOWE(struct ScriptContext *ctx);
 void OWEApproachForBattle(struct ScriptContext *ctx);
 void SetOverworldObjectSpecies(struct ScriptContext *ctx);
 
+extern const u8 gOWESpeciesBehaviorMap[];
 extern const u8 InteractWithOverworldWildEncounter[];
 
 #endif // GUARD_WILD_ENCOUNTER_OW_H

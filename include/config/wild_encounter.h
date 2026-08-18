@@ -2,7 +2,7 @@
 #define GUARD_CONFIG_WILD_ENCOUNTER_OW_H
 
 // Vanilla random encounters — keep TRUE to have both random + OWE encounters
-#define WE_VANILLA_RANDOM                   TRUE
+#define WE_VANILLA_RANDOM                   FALSE
 
 // Overworld Wild Encounters (OWEs) — requires OW_POKEMON_OBJECT_EVENTS TRUE
 #define WE_OW_ENCOUNTERS                    TRUE

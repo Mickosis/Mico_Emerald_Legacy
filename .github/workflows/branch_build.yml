@@ -1,8 +1,8 @@
-name: PR Build (BPS only)
+name: Branch Build (BPS only)
 
 on:
-  pull_request:
-    branches: [ main ]
+  push:
+    branches-ignore: [ main ]
     paths-ignore:
       - '**.md'
       - 'LICENSE'
@@ -12,6 +12,10 @@ on:
 
 permissions:
   contents: read
+
+concurrency:
+  group: bps-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -87,10 +91,10 @@ jobs:
         run: |
           python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Micos_Emerald_Legacy.bps
 
-      - name: Upload BPS Build Artifact (for PR testing)
+      - name: Upload BPS Build Artifact (for testing)
         uses: actions/upload-artifact@v4
         with:
-          name: Micos-Emerald-Legacy-PR-Build-${{ github.event.pull_request.number }}
+          name: Micos-Emerald-Legacy-BPS-${{ github.ref_name }}
           path: |
             Micos_Emerald_Legacy.bps
             pokeemerald.gba

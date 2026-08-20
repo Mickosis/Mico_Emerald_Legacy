@@ -9,13 +9,6 @@ on:
       - 'LICENSE'
       - '.gitignore'
       - '.github/copilot-instructions.md'
-  pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - '**.md'
-      - 'LICENSE'
-      - '.gitignore'
-      - '.github/copilot-instructions.md'
   workflow_dispatch:
     inputs:
       version:

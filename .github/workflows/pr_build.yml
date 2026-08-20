@@ -1,0 +1,96 @@
+name: PR Build (BPS only)
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+      - '.gitignore'
+      - '.github/copilot-instructions.md'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install -y --no-install-recommends gcc-arm-none-eabi binutils-arm-none-eabi libpng-dev
+
+      - name: Cache Vanilla Retail Base ROM
+        id: cache-vanilla-base
+        uses: actions/cache@v4
+        with:
+          path: vanilla_emerald.gba
+          key: vanilla-emerald-base-b75f28d0
+
+      - name: Cache Host Tools & agbcc
+        id: cache-tools
+        uses: actions/cache@v4
+        with:
+          path: |
+            tools/agbcc
+            tools/gbagfx/gbagfx
+            tools/scaninc/scaninc
+            tools/preproc/preproc
+            tools/ramscrgen/ramscrgen
+            tools/gbafix/gbafix
+            tools/rsfont/rsfont
+            tools/mapjson/mapjson
+            tools/aif2pcm/aif2pcm
+            tools/mid2agb/mid2agb
+          key: tools-agbcc-${{ hashFiles('make_tools.mk', 'tools/**') }}
+
+      - name: Setup agbcc
+        if: steps.cache-tools.outputs.cache-hit != 'true'
+        run: |
+          git clone --depth 1 https://github.com/pret/agbcc.git
+          cd agbcc
+          ./build.sh
+          ./install.sh ../
+          cd ..
+          rm -rf agbcc
+
+      - name: Build Host Tools
+        if: steps.cache-tools.outputs.cache-hit != 'true'
+        run: |
+          make -f make_tools.mk -j$(nproc)
+
+      - name: Compile Mico's Emerald Legacy ROM
+        run: |
+          make -j$(nproc)
+
+      - name: Build Vanilla Retail Pokémon Emerald Base (If not cached)
+        if: steps.cache-vanilla-base.outputs.cache-hit != 'true'
+        run: |
+          git worktree add /tmp/vanilla_build b75f28d0
+          cd /tmp/vanilla_build
+          find . -name "*.pal" -exec perl -pi -e 's/\r?\n/\r\n/' {} +
+          rm -rf tools/agbcc
+          ln -s "$GITHUB_WORKSPACE/tools/agbcc" tools/agbcc
+          make -f make_tools.mk -j$(nproc)
+          make -j$(nproc)
+          cp pokeemerald.gba "$GITHUB_WORKSPACE/vanilla_emerald.gba"
+          cd "$GITHUB_WORKSPACE"
+          git worktree remove --force /tmp/vanilla_build
+
+      - name: Generate BPS Patch File
+        run: |
+          python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Micos_Emerald_Legacy.bps
+
+      - name: Upload BPS Build Artifact (for PR testing)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Micos-Emerald-Legacy-PR-Build-${{ github.event.pull_request.number }}
+          path: |
+            Micos_Emerald_Legacy.bps
+            pokeemerald.gba

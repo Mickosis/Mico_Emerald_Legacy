@@ -14,6 +14,7 @@
 - **EXP. All**: Key Item obtained from Mr. Stone at Devon Corp after delivering Steven's letter. Can be toggled On/Off in your Key Items pocket or registered to `SELECT` for party-wide EV and EXP sharing.
 - **HM Field Move Freedom**: Clear obstacles without HMs taking up your Pokémon's combat moveslots—having the Gym Badge and HM in your bag is all you need!
 - **Persistent Flash**: Cave illumination from Flash stays lit across map transitions and room exits.
+- **Sceptile Type Change**: Sceptile is now a **Grass/Dragon** dual-type, gaining Dragon STAB with its signature Dragon Claw while keeping its stats, learnset, and everything else fully authentic.
 
 ---
 

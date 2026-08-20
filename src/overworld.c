@@ -1247,6 +1247,11 @@ void Overworld_FadeOutMapMusic(void)
     FadeOutMapMusic(4);
 }
 
+// Don't play an off-screen cry when the player is this close (in tiles) to a
+// map border. Near a map transition it reads as a "fleeing" whoosh as the
+// player crosses into the next map.
+#define AMBIENT_CRY_BORDER_MARGIN 3
+
 static void PlayAmbientCry(void)
 {
     s16 x, y;
@@ -1256,6 +1261,11 @@ static void PlayAmbientCry(void)
     PlayerGetDestCoords(&x, &y);
     if (sIsAmbientCryWaterMon == TRUE
      && !MetatileBehavior_IsSurfableWaterOrUnderwater(MapGridGetMetatileBehaviorAt(x, y)))
+        return;
+    if (x <= AMBIENT_CRY_BORDER_MARGIN
+     || x >= gMapHeader.mapLayout->width - 1 - AMBIENT_CRY_BORDER_MARGIN
+     || y <= AMBIENT_CRY_BORDER_MARGIN
+     || y >= gMapHeader.mapLayout->height - 1 - AMBIENT_CRY_BORDER_MARGIN)
         return;
     pan = (Random() % 88) + 212;
     volume = (Random() % 30) + 50;

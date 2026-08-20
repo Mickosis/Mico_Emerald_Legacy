@@ -1,6 +1,6 @@
 # 🤖 Agent Instructions & Repository Guidelines
 
-Welcome to **Mico's Pokémon Emerald Legacy**. This document serves as the permanent system instructions for all AI coding agents (and human developers) contributing to this codebase.
+Welcome to **Pokémon Modern Emerald**. This document serves as the permanent system instructions for all AI coding agents (and human developers) contributing to this codebase.
 
 ---
 
@@ -16,14 +16,34 @@ Welcome to **Mico's Pokémon Emerald Legacy**. This document serves as the perma
    - Always verify `git diff include/global.h` to confirm that all offsets remain 100% byte-for-byte compatible with base *Pokémon Emerald Legacy* (`cRz-Shadows/Pokemon_Emerald_Legacy`).
 
 3. **Documentation Synchronization Protocol**:
-   - Whenever a feature is added, modified, or removed, **always update `README.md`** immediately to keep the feature list and gameplay instructions accurate and clear.
+   - Whenever a feature is added, modified, or removed, **always update `README.md`** immediately. `README.md` is the single source of truth for all feature descriptions, mechanics, and guides.
 
 4. **Automated CI/CD & Release Protocol**:
    - Building the ROM and updating GitHub Releases is 100% automated via GitHub Actions (`.github/workflows/build_and_release.yml`).
    - Every release automatically includes:
-     1. The compiled patch file: **`Micos_Emerald_Legacy.bps`** (100% clean, legal distribution)
-     2. An automated changelog and feature list.
+     1. The compiled patch file: **`Modern_Emerald.bps`** (100% clean, legal distribution)
+     2. An automated commit changelog, quick patching instructions, and link to `README.md`.
    - The compiled ROM (**`pokeemerald.gba`**) is stored as a private GitHub Actions workflow artifact.
+
+---
+
+## 🌿 Development & Branching Workflow
+
+1. **Feature Branching Protocol**:
+   - When beginning a new feature or multi-step system overhaul, **always ask the user** if they would like to create a dedicated feature branch (e.g. `feature/<feature-name>`) to keep `main` stable.
+
+2. **One Feature per Commit Protocol**:
+   - Keep commits clean, isolated, and granular: **1 distinct feature or bug fix per commit**.
+   - Build only at the end of the feature or when validating for testing to conserve time and resources.
+
+3. **Wild Pokémon & Encounter Generation Protocol**:
+   - Always use the canonical engine function `CreateWildMon(speciesId, level)` for all battle encounters (OWEs, fishing, scripted spawns) rather than manual `CreateMon` calls, guaranteeing legal Trainer IDs, valid checksums, and preventing Bad EGG corruptions upon catching.
+
+4. **Overworld & Follower Coexistence**:
+   - Follower Pokémon and wild overworld spawns share the GBA 16-sprite object event limit. Always use dynamic replacement routines (`TryAndDespawnOldestGeneratedOWE_ToFreeObject`) to prevent sprite starvation crashes.
+
+5. **Test Patch Destination Protocol**:
+   - When generating local test `.bps` patches for verification, **always ask the user** for their preferred destination folder (e.g. `Downloads/`, `Desktop/`) rather than hardcoding a destination path.
 
 ---
 
@@ -46,12 +66,15 @@ The repository automatically calculates version numbers and publishes GitHub Rel
 ## 🛠️ Build & Verification Quick Reference
 
 ```bash
-# Compile tools & ROM locally (macOS / Linux)
+# Fast local compilation
+./build_local.sh
+
+# Or compile tools & ROM manually (macOS / Linux)
 make -f make_tools.mk -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 make -j$(nproc 2>/dev/null || sysctl -n hw.ncpu)
 
-# Generate .bps patch against base Emerald Legacy
-python3 tools/make_bps.py base_emerald_legacy.gba pokeemerald.gba Micos_Emerald_Legacy.bps
+# Generate local test BPS patch against clean Emerald base (ask user for preferred destination directory)
+python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba <preferred_path>/Modern_Emerald_Test.bps
 
 # Check Git status & diffs
 git status

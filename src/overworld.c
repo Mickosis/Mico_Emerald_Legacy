@@ -58,6 +58,7 @@
 #include "tv.h"
 #include "scanline_effect.h"
 #include "wild_encounter.h"
+#include "wild_encounter_ow.h"
 #include "frontier_util.h"
 #include "constants/abilities.h"
 #include "constants/layouts.h"
@@ -377,7 +378,6 @@ void Overworld_ResetStateAfterFly(void)
     FlagClear(FLAG_SYS_CRUISE_MODE);
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
-    FlagClear(FLAG_SYS_USE_FLASH);
 }
 
 void Overworld_ResetStateAfterTeleport(void)
@@ -387,7 +387,6 @@ void Overworld_ResetStateAfterTeleport(void)
     FlagClear(FLAG_SYS_CRUISE_MODE);
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
-    FlagClear(FLAG_SYS_USE_FLASH);
     RunScriptImmediately(EventScript_ResetMrBriney);
 }
 
@@ -398,7 +397,6 @@ void Overworld_ResetStateAfterDigEscRope(void)
     FlagClear(FLAG_SYS_CRUISE_MODE);
     FlagClear(FLAG_SYS_SAFARI_MODE);
     FlagClear(FLAG_SYS_USE_STRENGTH);
-    FlagClear(FLAG_SYS_USE_FLASH);
 }
 
 static void Overworld_ResetStateAfterWhiteOut(void)
@@ -827,6 +825,8 @@ void LoadMapFromCameraTransition(u8 mapGroup, u8 mapNum)
     if (gMapHeader.regionMapSectionId != MAPSEC_BATTLE_FRONTIER
      || gMapHeader.regionMapSectionId != sLastMapSectionId)
         ShowMapNamePopup();
+
+    SetMinimumOWESpawnTimer();
 }
 
 static void LoadMapFromWarp(bool32 a1)
@@ -858,8 +858,6 @@ static void LoadMapFromWarp(bool32 a1)
         DoTimeBasedEvents();
     SetSavedWeatherFromCurrMapHeader();
     ChooseAmbientCrySpecies();
-    if (isOutdoors)
-        FlagClear(FLAG_SYS_USE_FLASH);
     SetDefaultFlashLevel();
     Overworld_ClearSavedMusic();
     RunOnTransitionMapScript();
@@ -877,6 +875,8 @@ static void LoadMapFromWarp(bool32 a1)
         UpdateTVScreensOnMap(gBackupMapLayout.width, gBackupMapLayout.height);
         InitSecretBaseAppearance(TRUE);
     }
+
+    SetMinimumOWESpawnTimer();
 }
 
 void ResetInitialPlayerAvatarState(void)
@@ -1247,10 +1247,22 @@ void Overworld_FadeOutMapMusic(void)
     FadeOutMapMusic(4);
 }
 
-// Don't play an off-screen cry when the player is this close (in tiles) to a
-// map border. Near a map transition it reads as a "fleeing" whoosh as the
-// player crosses into the next map.
-#define AMBIENT_CRY_BORDER_MARGIN 3
+static bool32 ShouldPlayVanillaAmbientCry(void)
+{
+    switch (OW_AMBIENT_CRIES)
+    {
+    case OW_AMBIENT_CRIES_VANILLA:
+        return TRUE;
+    case OW_AMBIENT_CRIES_OWE_PRIORITY:
+        return !TryPlayAmbientCryOWE();
+    case OW_AMBIENT_CRIES_OWE_ONLY:
+        TryPlayAmbientCryOWE();
+        return FALSE;
+    case OW_AMBIENT_CRIES_NONE:
+    default:
+        return FALSE;
+    }
+}
 
 static void PlayAmbientCry(void)
 {
@@ -1258,14 +1270,12 @@ static void PlayAmbientCry(void)
     s8 pan;
     s8 volume;
 
+    if (!ShouldPlayVanillaAmbientCry())
+        return;
+
     PlayerGetDestCoords(&x, &y);
     if (sIsAmbientCryWaterMon == TRUE
      && !MetatileBehavior_IsSurfableWaterOrUnderwater(MapGridGetMetatileBehaviorAt(x, y)))
-        return;
-    if (x <= AMBIENT_CRY_BORDER_MARGIN
-     || x >= gMapHeader.mapLayout->width - 1 - AMBIENT_CRY_BORDER_MARGIN
-     || y <= AMBIENT_CRY_BORDER_MARGIN
-     || y >= gMapHeader.mapLayout->height - 1 - AMBIENT_CRY_BORDER_MARGIN)
         return;
     pan = (Random() % 88) + 212;
     volume = (Random() % 30) + 50;
@@ -1488,6 +1498,7 @@ static void OverworldBasic(void)
     UpdatePaletteFade();
     UpdateTilesetAnimations();
     DoScheduledBgTilemapCopiesToVram();
+    UpdateOverworldWildEncounter();
 }
 
 // This CB2 is used when starting

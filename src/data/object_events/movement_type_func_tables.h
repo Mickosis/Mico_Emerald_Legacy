@@ -456,3 +456,93 @@ u8 (*const gMovementTypeFuncs_Invisible[])(struct ObjectEvent *, struct Sprite *
     MovementType_Invisible_Step1,
     MovementType_Invisible_Step2,
 };
+
+u8 (*const gMovementTypeFuncs_WanderAround_OverworldWildEncounter[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_WanderAround_Step0,
+    MovementType_WanderAround_Step1,
+    MovementType_OverworldWildEncounter_WanderAround_Step2,
+    MovementType_OverworldWildEncounter_WanderAround_Step3,
+    MovementType_OverworldWildEncounter_WanderAround_Step4,
+    MovementType_OverworldWildEncounter_WanderAround_Step5,
+    MovementType_WanderAround_Step6
+};
+
+u8 (*const gMovementTypeFuncs_ChasePlayer_OverworldWildEncounter[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_WanderAround_Step0,
+    MovementType_WanderAround_Step1,
+    MovementType_OverworldWildEncounter_WanderAround_Step2,
+    MovementType_OverworldWildEncounter_WanderAround_Step3,
+    MovementType_OverworldWildEncounter_WanderAround_Step4,
+    MovementType_OverworldWildEncounter_WanderAround_Step5,
+    MovementType_WanderAround_Step6,
+    MovementType_OverworldWildEncounter_Common_Step7,
+    MovementType_OverworldWildEncounter_ChasePlayer_Step8,
+    MovementType_OverworldWildEncounter_Common_Step9,
+    MovementType_OverworldWildEncounter_ChasePlayer_Step10,
+    MovementType_OverworldWildEncounter_ChasePlayer_Step11,
+    MovementType_OverworldWildEncounter_Common_Step12
+};
+
+u8 (*const gMovementTypeFuncs_FleePlayer_OverworldWildEncounter[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_WanderAround_Step0,
+    MovementType_WanderAround_Step1,
+    MovementType_OverworldWildEncounter_WanderAround_Step2,
+    MovementType_OverworldWildEncounter_WanderAround_Step3,
+    MovementType_OverworldWildEncounter_WanderAround_Step4,
+    MovementType_OverworldWildEncounter_WanderAround_Step5,
+    MovementType_WanderAround_Step6,
+    MovementType_OverworldWildEncounter_Common_Step7,
+    MovementType_OverworldWildEncounter_FleePlayer_Step8,
+    MovementType_OverworldWildEncounter_Common_Step9,
+    MovementType_OverworldWildEncounter_FleePlayer_Step10,
+    MovementType_OverworldWildEncounter_FleePlayer_Step11,
+    MovementType_OverworldWildEncounter_Common_Step12
+};
+
+u8 (*const gMovementTypeFuncs_WatchPlayer_OverworldWildEncounter[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_WanderAround_Step0,
+    MovementType_WanderAround_Step1,
+    MovementType_OverworldWildEncounter_WanderAround_Step2,
+    MovementType_OverworldWildEncounter_WanderAround_Step3,
+    MovementType_OverworldWildEncounter_WanderAround_Step4,
+    MovementType_OverworldWildEncounter_WanderAround_Step5,
+    MovementType_WanderAround_Step6,
+    MovementType_OverworldWildEncounter_Common_Step7,
+    MovementType_OverworldWildEncounter_WatchPlayer_Step8,
+    MovementType_OverworldWildEncounter_Common_Step9,
+    MovementType_OverworldWildEncounter_WatchPlayer_Step10,
+    MovementType_OverworldWildEncounter_WatchPlayer_Step11,
+    MovementType_OverworldWildEncounter_Common_Step12
+};
+
+u8 (*const gMovementTypeFuncs_ApproachPlayer_OverworldWildEncounter[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_WanderAround_Step0,
+    MovementType_WanderAround_Step1,
+    MovementType_OverworldWildEncounter_WanderAround_Step2,
+    MovementType_OverworldWildEncounter_WanderAround_Step3,
+    MovementType_OverworldWildEncounter_WanderAround_Step4,
+    MovementType_OverworldWildEncounter_WanderAround_Step5,
+    MovementType_WanderAround_Step6,
+    MovementType_OverworldWildEncounter_Common_Step7,
+    MovementType_OverworldWildEncounter_ApproachPlayer_Step8,
+    MovementType_OverworldWildEncounter_Common_Step9,
+    MovementType_OverworldWildEncounter_ApproachPlayer_Step10,
+    MovementType_OverworldWildEncounter_ApproachPlayer_Step11,
+    MovementType_OverworldWildEncounter_Common_Step12
+};
+
+u8 (*const gMovementTypeFuncs_Despawn_OverworldWildEncounter[])(struct ObjectEvent *, struct Sprite *) = {
+    MovementType_WanderAround_Step0,
+    MovementType_WanderAround_Step1,
+    MovementType_OverworldWildEncounter_WanderAround_Step2,
+    MovementType_OverworldWildEncounter_WanderAround_Step3,
+    MovementType_OverworldWildEncounter_WanderAround_Step4,
+    MovementType_OverworldWildEncounter_WanderAround_Step5,
+    MovementType_WanderAround_Step6,
+    MovementType_OverworldWildEncounter_Common_Step7,
+    MovementType_OverworldWildEncounter_Despawn_Step8,
+    MovementType_OverworldWildEncounter_Common_Step9,
+    MovementType_OverworldWildEncounter_Despawn_Step10,
+    MovementType_OverworldWildEncounter_Despawn_Step11,
+    MovementType_OverworldWildEncounter_Common_Step12
+};

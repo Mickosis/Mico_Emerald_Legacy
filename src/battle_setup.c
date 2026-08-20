@@ -16,6 +16,7 @@
 #include "palette.h"
 #include "window.h"
 #include "event_object_movement.h"
+#include "field_effect.h"
 #include "event_scripts.h"
 #include "tv.h"
 #include "trainer_see.h"
@@ -36,6 +37,7 @@
 #include "field_control_avatar.h"
 #include "mirage_tower.h"
 #include "field_screen_effect.h"
+#include "wild_encounter_ow.h"
 #include "data.h"
 #include "constants/battle_frontier.h"
 #include "constants/battle_setup.h"
@@ -368,6 +370,7 @@ static void Task_BattleStart(u8 taskId)
             SetMainCallback2(CB2_InitBattle);
             RestartWildEncounterImmunitySteps();
             ClearPoisonStepCounter();
+            DespawnOWEOnBattleStart();
             DestroyTask(taskId);
         }
         break;
@@ -1086,6 +1089,7 @@ void SetMapVarsToTrainer(void)
 const u8 *BattleSetup_ConfigureTrainerBattle(const u8 *data)
 {
     InitTrainerBattleVariables();
+    HideFollowerForFieldEffect();
     sTrainerBattleMode = TrainerBattleLoadArg8(data);
 
     switch (sTrainerBattleMode)

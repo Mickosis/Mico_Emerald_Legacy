@@ -3318,6 +3318,25 @@ static void Cmd_jumpiftype(void)
         gBattlescriptCurrInstr += 7;
 }
 
+// Pick a player battler that can actually display messages (present and alive).
+// A fainted-but-not-yet-replaced battler is not "absent", so exp messages can
+// otherwise be queued to a controller that cannot display them (e.g. in doubles).
+static u8 GetExpMessageBattlerId(u8 preferredBattlerId)
+{
+    if (!(gAbsentBattlerFlags & gBitTable[preferredBattlerId])
+        && gBattleMons[preferredBattlerId].hp != 0)
+        return preferredBattlerId;
+    if (preferredBattlerId != 0
+        && !(gAbsentBattlerFlags & gBitTable[0])
+        && gBattleMons[0].hp != 0)
+        return 0;
+    if (preferredBattlerId != 2
+        && !(gAbsentBattlerFlags & gBitTable[2])
+        && gBattleMons[2].hp != 0)
+        return 2;
+    return preferredBattlerId;
+}
+
 static void Cmd_getexp(void)
 {
     u16 item;
@@ -3355,7 +3374,7 @@ static void Cmd_getexp(void)
             u16 calculatedExp;
             s32 viaSentIn;
 
-            for (viaSentIn = 0, gExpAllMessCheck = FlagGet(FLAG_EXP_ALL); i < PARTY_SIZE; i++)
+            for (viaSentIn = 0, i = 0, gExpAllMessCheck = FALSE; i < PARTY_SIZE; i++)
             {
                 if (GetMonData(&gPlayerParty[i], MON_DATA_SPECIES) == SPECIES_NONE || GetMonData(&gPlayerParty[i], MON_DATA_HP) == 0)
                     continue;
@@ -3450,6 +3469,7 @@ static void Cmd_getexp(void)
                     // Added EXP. ALL to EXP. Share calculation 
                     if (FlagGet(FLAG_EXP_ALL))
                     {
+                        gExpAllMessCheck = TRUE;
                         gBattleMoveDamage += gExpShareExp;
                     }
                     else if (holdEffect == HOLD_EFFECT_EXP_SHARE)
@@ -3501,16 +3521,8 @@ static void Cmd_getexp(void)
                     PREPARE_STRING_BUFFER(gBattleTextBuff2, i);
                     PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff3, 5, gBattleMoveDamage);
 
-                    if (gBattleStruct->sentInPokes & 1)
-                        PrepareStringBattle(STRINGID_PKMNGAINEDEXP, gBattleStruct->expGetterBattlerId);
-                    else if (holdEffect == HOLD_EFFECT_EXP_SHARE && !FlagGet(FLAG_EXP_ALL))
-                        PrepareStringBattle(STRINGID_PKMNGAINEDEXP, gBattleStruct->expGetterBattlerId);
-                    else if (gExpAllMessCheck && FlagGet(FLAG_EXP_ALL))
-                    {
-                        gExpAllMessCheck = FALSE;
-                        PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff3, 5, gExpShareExp);
-                        PrepareStringBattle(STRINGID_PKMNGAINEDEXPALL, gBattleStruct->expGetterBattlerId);
-                    }
+if ((gBattleStruct->sentInPokes & 1) || ((holdEffect == HOLD_EFFECT_EXP_SHARE) && !FlagGet(FLAG_EXP_ALL)))
+                        PrepareStringBattle(STRINGID_PKMNGAINEDEXP, GetExpMessageBattlerId(gBattleStruct->expGetterBattlerId));
 
                     MonGainEVs(&gPlayerParty[gBattleStruct->expGetterMonId], gBattleMons[gBattlerFainted].species);
                 }
@@ -3604,7 +3616,16 @@ static void Cmd_getexp(void)
             if (gBattleStruct->expGetterMonId < PARTY_SIZE)
                 gBattleScripting.getexpState = 2; // loop again
             else
+            {                
+                if (gExpAllMessCheck && FlagGet(FLAG_EXP_ALL))
+                {
+                    gExpAllMessCheck = FALSE;
+                    gBattleStruct->expGetterMonId = 0;
+                    PREPARE_WORD_NUMBER_BUFFER(gBattleTextBuff3, 5, gExpShareExp);
+                    PrepareStringBattle(STRINGID_PKMNGAINEDEXPALL, GetExpMessageBattlerId(gBattleStruct->expGetterBattlerId));
+                }
                 gBattleScripting.getexpState = 6; // we're done
+            }
         }
         break;
     case 6: // increment instruction

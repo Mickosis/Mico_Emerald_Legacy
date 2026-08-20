@@ -1365,9 +1365,6 @@ void TryDespawnOWEsCrossingMapConnection(void)
     if (GetNumberOfActiveOWEs(OWE_GENERATED) == 0)
         return;
 
-    if (WE_OWE_DESPAWN_SOUND)
-        PlaySE(SE_FLEE);
-        
     DespawnAllOverworldWildEncounters(OWE_GENERATED, 0);
 }
 

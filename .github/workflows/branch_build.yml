@@ -91,10 +91,16 @@ jobs:
         run: |
           python3 tools/make_bps.py vanilla_emerald.gba pokeemerald.gba Micos_Emerald_Legacy.bps
 
+      - name: Compute artifact name
+        id: artname
+        run: |
+          SAFE_NAME="${GITHUB_REF_NAME//\//-}"
+          echo "name=Micos-Emerald-Legacy-BPS-$SAFE_NAME" >> "$GITHUB_OUTPUT"
+
       - name: Upload BPS Build Artifact (for testing)
         uses: actions/upload-artifact@v4
         with:
-          name: Micos-Emerald-Legacy-BPS-${{ github.ref_name }}
+          name: ${{ steps.artname.outputs.name }}
           path: |
             Micos_Emerald_Legacy.bps
             pokeemerald.gba
